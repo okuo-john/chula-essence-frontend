@@ -12,6 +12,7 @@ function Navbar() {
     { name: "Shop Wigs", path: "/shop" },
     { name: "Testimonials", path: "/testimonials" },
     { name: "Contact", path: "/contact" },
+    { name: "Bookings", path: "/bookings"}
   ];
 
   return (
