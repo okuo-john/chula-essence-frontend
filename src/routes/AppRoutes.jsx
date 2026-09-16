@@ -5,6 +5,7 @@ import CustomerLayout from "../components/layout/CustomerLayout";
 import Home from "../pages/customer/Home";
 import Services from "../pages/customer/Services";
 import ShopWigs from "../pages/customer/ShopWigs";
+import BookServices from "../pages/customer/BookService";
 
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
@@ -28,6 +29,15 @@ function AppRoutes() {
         element={
           <CustomerLayout>
             <Services />
+          </CustomerLayout>
+        }
+      />
+
+       <Route
+        path="/book-service"
+        element={
+          <CustomerLayout>
+            <BookServices />
           </CustomerLayout>
         }
       />
