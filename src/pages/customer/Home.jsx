@@ -65,7 +65,7 @@ const Home = () => {
 
             <Link
               to="/book-service"
-              className="inline-flex items-center justify-center rounded-full bg-primary-pink px-8 py-3 font-body font-semibold text-white shadow-sm transition duration-200 hover:bg-pink-600 animate-pulse"
+              className="inline-flex items-center justify-center rounded-full bg-primary-pink px-8 py-3 font-body font-semibold text-white shadow-sm transition duration-200 hover:bg-pink-600"
             >
               Book a Service
             </Link>

@@ -23,7 +23,7 @@ function Navbar() {
           <img
             src={chulaLogo}
             alt="Chula Essence"
-            className="w-[105px] h-auto"
+            className="w-[105px] h-auto animate-pulse"
           />
         </Link>
 
