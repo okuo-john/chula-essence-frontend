@@ -1,34 +1,77 @@
-import { Link, useLocation } from "react-router-dom";
-import { Search, ShoppingBag } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Search, ShoppingBag, Calendar, Menu, X } from "lucide-react";
 import chulaLogo from "../../assets/logos/chula-essence-logo.png";
+import { bookingApi } from "../../services/bookingApi";
 
 function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [bookingCount, setBookingCount] = useState(0);
+
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem("token"));
+    setIsMenuOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    function handleStorageChange() {
+      setIsLoggedIn(!!localStorage.getItem("token"));
+    }
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setBookingCount(0);
+      return;
+    }
+    let cancelled = false;
+    bookingApi
+      .getMyBookings()
+      .then((bookings) => {
+        if (!cancelled) setBookingCount(bookings.length);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [isLoggedIn, location.pathname]);
+
+  function handleLogout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setIsLoggedIn(false);
+    navigate("/login");
+  }
 
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Services", path: "/services" },
     { name: "Book a Service", path: "/book-service" },
-    { name: "Shop Wigs", path: "/shop" },
-    { name: "Testimonials", path: "/testimonials" },
+    { name: "Shop Wigs", path: "/shop-wigs" },
+    { name: "Testimonials", path: "/#testimonials" },
     { name: "Contact", path: "/contact" },
   ];
 
   return (
-    <nav className="w-full bg-white border-b border-gray-100">
-      <div className="max-w-[1200px] mx-auto h-[72px] px-6 flex items-center justify-between">
+    <nav className="w-full bg-white border-b border-gray-100 relative">
+      <div className="max-w-[1200px] mx-auto h-[72px] px-4 sm:px-6 flex items-center justify-between">
 
         {/* Logo */}
         <Link to="/" className="shrink-0">
           <img
             src={chulaLogo}
             alt="Chula Essence"
-            className="w-[105px] h-auto"
+            className="w-[90px] sm:w-[105px] h-auto"
           />
         </Link>
 
-        {/* Navigation Links */}
-        <div className="flex items-center gap-7">
+        {/* Navigation Links — desktop only */}
+        <div className="hidden lg:flex items-center gap-7">
           {navLinks.map((link) => {
             const isActive = location.pathname === link.path;
 
@@ -36,7 +79,7 @@ function Navbar() {
               <Link
                 key={link.name}
                 to={link.path}
-                className={`relative py-7 text-[11px] font-medium transition-colors ${
+                className={`relative py-7 text-[15px] font-medium transition-colors ${
                   isActive
                     ? "text-[#FF3B73]"
                     : "text-[#111111] hover:text-[#FF3B73]"
@@ -44,7 +87,6 @@ function Navbar() {
               >
                 {link.name}
 
-                {/* Active underline */}
                 {isActive && (
                   <span className="absolute left-0 right-0 bottom-3 h-[2px] bg-[#FF3B73]" />
                 )}
@@ -54,16 +96,34 @@ function Navbar() {
         </div>
 
         {/* Navbar Actions */}
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-3 sm:gap-5">
 
-          {/* Search */}
+          {/* Search — hidden on very small screens */}
           <button
             type="button"
-            className="flex flex-col items-center gap-1 text-[#111111] hover:text-[#FF3B73] transition-colors"
+            className="hidden sm:flex flex-col items-center gap-1 text-[#111111] hover:text-[#FF3B73] transition-colors"
           >
             <Search size={16} strokeWidth={1.8} />
             <span className="text-[9px]">Search</span>
           </button>
+
+          {/* My Bookings — only shown when logged in */}
+          {isLoggedIn && (
+            <Link
+              to="/my-bookings"
+              className="relative flex flex-col items-center gap-1 text-[#111111] hover:text-[#FF3B73] transition-colors"
+            >
+              <Calendar size={16} strokeWidth={1.8} />
+
+              {bookingCount > 0 && (
+                <span className="absolute -top-1 -right-2 flex h-[13px] min-w-[13px] items-center justify-center rounded-full bg-[#FF3B73] px-1 text-[7px] text-white">
+                  {bookingCount}
+                </span>
+              )}
+
+              <span className="text-[9px] hidden sm:block">Bookings</span>
+            </Link>
+          )}
 
           {/* Cart */}
           <Link
@@ -72,24 +132,101 @@ function Navbar() {
           >
             <ShoppingBag size={16} strokeWidth={1.8} />
 
-            {/* Cart Badge */}
             <span className="absolute -top-1 -right-2 flex h-[13px] min-w-[13px] items-center justify-center rounded-full bg-[#FF3B73] px-1 text-[7px] text-white">
               0
             </span>
 
-            <span className="text-[9px]">Cart</span>
+            <span className="text-[9px] hidden sm:block">Cart</span>
           </Link>
 
-          {/* Login / Account */}
-          <Link
-            to="/login"
-            className="rounded-md bg-[#111111] px-5 py-3 text-[10px] font-medium text-white hover:bg-[#FF3B73] transition-colors"
+          {/* Login / Logout — desktop only */}
+          <div className="hidden lg:block">
+            {isLoggedIn ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="rounded-md bg-[#111111] px-5 py-3 text-[10px] font-medium text-white hover:bg-[#FF3B73] transition-colors"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="rounded-md bg-[#111111] px-5 py-3 text-[10px] font-medium text-white hover:bg-[#FF3B73] transition-colors"
+              >
+                Login / Account
+              </Link>
+            )}
+          </div>
+
+          {/* Hamburger — mobile/tablet only */}
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen((prev) => !prev)}
+            aria-label="Toggle menu"
+            aria-expanded={isMenuOpen}
+            className="lg:hidden text-[#111111]"
           >
-            Login / Account
-          </Link>
+            {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
 
         </div>
       </div>
+
+      {/* Mobile menu */}
+      {isMenuOpen && (
+        <div className="lg:hidden absolute top-[72px] left-0 right-0 bg-white border-b border-gray-100 shadow-sm z-50">
+          <div className="flex flex-col px-6 py-4">
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.path;
+              return (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  className={`py-3 text-sm font-medium border-b border-gray-50 last:border-b-0 ${
+                    isActive ? "text-[#FF3B73]" : "text-[#111111]"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
+
+            {isLoggedIn && (
+              <Link
+                to="/my-bookings"
+                className="py-3 text-sm font-medium text-[#111111] border-b border-gray-50 flex items-center justify-between"
+              >
+                My Bookings
+                {bookingCount > 0 && (
+                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#FF3B73] px-1.5 text-[10px] text-white">
+                    {bookingCount}
+                  </span>
+                )}
+              </Link>
+            )}
+
+            <div className="pt-4">
+              {isLoggedIn ? (
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="w-full rounded-md bg-[#111111] px-5 py-3 text-sm font-medium text-white hover:bg-[#FF3B73] transition-colors"
+                >
+                  Logout
+                </button>
+              ) : (
+                <Link
+                  to="/login"
+                  className="block text-center w-full rounded-md bg-[#111111] px-5 py-3 text-sm font-medium text-white hover:bg-[#FF3B73] transition-colors"
+                >
+                  Login / Account
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

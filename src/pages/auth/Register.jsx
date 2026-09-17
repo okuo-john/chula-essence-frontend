@@ -1,14 +1,47 @@
 import chulaLogo from "../../assets/logos/chula-essence-logo.png"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Eye, EyeClosed, EyeOff } from "lucide-react";
+import api from "../../services/api";
+import { toast } from "react-toastify";
 
 function Register() {
 
+ const navigate = useNavigate();
+
+ const [formData, setFormData] = useState({
+   fullname: "",
+   email: "",
+   phoneNumber: "",
+   password: "",
+ });
+
+  const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
-  const handleSubmit = async (e) => {
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await api.post("/auth/register", formData);
+      const { token, user } = response.data.data;
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      toast.success("Registration successful");
+      navigate("/");
+    } catch (err) {
+      toast.error(err.response?.data?.message)
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -29,11 +62,13 @@ function Register() {
               <form onSubmit={handleSubmit} className="flex flex-col my-5 gap-3 w-70">
 
                 <div className="md:col-span-2">
-                  <label htmlFor="fullName" className="mb-1 block text-sm font-semibold text-slate-700">Full Name</label>
+                  <label htmlFor="fullname" className="mb-1 block text-sm font-semibold text-slate-700">Full Name</label>
                   <input
                     type="text"
-                    name="email"
+                    name="fullname"
                     placeholder="Your full name"
+                    value={formData.fullname}
+                    onChange={handleChange}
                     className="w-full rounded border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition placeholder:text-slate-400 focus:border-[#ff68aa] " />
                 </div>
 
@@ -43,6 +78,8 @@ function Register() {
                     type="email"
                     name="email"
                     placeholder="you@gmail.com"
+                    value={formData.email}
+                    onChange={handleChange}
                     className="w-full rounded border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition placeholder:text-slate-400 focus:border-[#ff68aa] " />
                 </div>
 
@@ -52,6 +89,8 @@ function Register() {
                     type="text"
                     name="phoneNumber"
                     placeholder="0701 2345 6789"
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
                     className="w-full rounded border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition placeholder:text-slate-400 focus:border-[#ff68aa] " />
                 </div>
 
@@ -60,7 +99,9 @@ function Register() {
                   <input
                     type={showPassword ? "text" : "password"}
                     name="password"
-                    placeholder="......."
+                    placeholder="* * * * * * *"
+                    value={formData.password}
+                    onChange={handleChange}
                     className="w-full rounded border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition placeholder:text-slate-400 placeholder:font-bold focus:border-[#ff68aa] " />
                     
 
@@ -74,7 +115,12 @@ function Register() {
                 </div>
 
                 <button 
-                className="mt-8 w-full rounded-xl bg-primary-pink px-5 py-3.5 font-semibold text-white shadow-sm transition hover:bg-pink-400 active:scale-[0.99] cursor-pointer">Create Account</button>
+                className="mt-8 w-full rounded-xl bg-primary-pink px-5 py-3.5 font-semibold text-white shadow-sm transition hover:bg-pink-400 active:scale-[0.99] cursor-pointer"
+                disabled={loading}
+                type="submit"
+                >
+                  {loading ? "Registering..." : "Create Account"}
+                  </button>
 
               </form>
 

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { SERVICES, EMPTY_ADDRESS_FORM } from "../../components/booking/data.js"
 import ServiceSelector from "../../components/booking/ServiceSelector";
 import ServiceTypeSelector from "../../components/booking/ServiceTypeSelector";
@@ -8,15 +9,67 @@ import DateTimeSelector from "../../components/booking/DateTimeSelector";
 import AdditionalDetails from "../../components/booking/AdditionalDetails.jsx";
 import BookingSummary from "../../components/booking/BookingSummary";
 import BookingSuccess from "../../components/booking/BookingSuccess";
+import { convertTo24Hour } from "../../components/booking/utils.js";
+import { bookingApi } from "../../services/bookingApi.js";
+  import { toast } from "react-toastify";
 
-export default function BookingService() {
+
+export default function BookServices() {
   const [step, setStep] = useState("services");
+  const [allServices, setAllServices] = useState([]);
   const [selectedServices, setSelectedServices] = useState(() => new Set());
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [addressForm, setAddressForm] = useState(EMPTY_ADDRESS_FORM);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [additionalDetails, setAdditionalDetails] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+
+  const navigate = useNavigate();
+
+  async function handleSubmitBooking() {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login", { state: { redirectTo: "/book-service" } });
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+    try {
+      const payload = {
+        services: Array.from(selectedServices),
+        appointmentDate: selectedDate.toISOString(),
+        startTime: convertTo24Hour(selectedTime),
+        serviceType: selectedLocation === "home" ? "Home" : "Shop",
+        additionalDetails: additionalDetails || undefined,
+      };
+
+      if (selectedLocation === "home") {
+        payload.serviceLocation = {
+          address: addressForm.address,
+          city: addressForm.city,
+          state: addressForm.state,
+          landmark: addressForm.landmark || undefined,
+          additionalInfo: addressForm.instructions || undefined,
+        };
+      }
+
+      await bookingApi.createBooking(payload);
+      setStep("confirmed");
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || "Couldn't submit your booking. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  useEffect(() => {
+    bookingApi.getServices().then(setAllServices).catch(() => { });
+  }, []);
 
   function toggleService(id) {
     setSelectedServices((prev) => {
@@ -32,6 +85,8 @@ export default function BookingService() {
     if (selectedLocation === "shop") setStep("shop-location");
   }
 
+
+
   function restart() {
     setStep("services");
     setSelectedServices(new Set());
@@ -40,6 +95,7 @@ export default function BookingService() {
     setSelectedDate(null);
     setSelectedTime(null);
     setAdditionalDetails("");
+    setSubmitError(null);
   }
 
   const booking = {
@@ -113,8 +169,11 @@ export default function BookingService() {
       {step === "review" && (
         <BookingSummary
           booking={booking}
-          onSubmit={() => setStep("confirmed")}
+          allServices={allServices}
+          onSubmit={handleSubmitBooking}
           onBack={() => setStep("additional-details")}
+          isSubmitting={isSubmitting}
+          submitError={submitError}
         />
       )}
 
