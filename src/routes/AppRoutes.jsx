@@ -54,7 +54,7 @@ function AppRoutes() {
       />
 
       <Route
-        path="/shop"
+        path="/shop-wigs"
         element={
           <CustomerLayout>
             <ShopWigs />

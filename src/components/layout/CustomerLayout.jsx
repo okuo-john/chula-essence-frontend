@@ -1,4 +1,5 @@
 import Navbar from "./Navbar";
+import Footer from "./Footer";
 
 function CustomerLayout({ children }) {
   return (
@@ -8,6 +9,8 @@ function CustomerLayout({ children }) {
       <main>
         {children}
       </main>
+
+      <Footer />
     </>
   );
 }
