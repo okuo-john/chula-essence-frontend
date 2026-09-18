@@ -1,10 +1,9 @@
-import { SERVICES } from "./data";
-import { formatNaira, formatDate } from "./utils"
+import { formatNaira, formatDate } from "./utils";
 import BookingStepper from "./BookingStepper";
 
-export default function BookingSummary({ booking, onSubmit, onBack }) {
-  const selectedServiceObjs = SERVICES.filter((s) => booking.services.has(s.id));
-  const total = selectedServiceObjs.reduce((sum, s) => sum + s.price, 0);
+export default function BookingSummary({ booking, allServices, onSubmit, onBack, isSubmitting, submitError }) {
+  const selectedServiceObjs = allServices.filter((s) => booking.services.has(s._id));
+  const total = selectedServiceObjs.reduce((sum, s) => sum + Number(s.price), 0);
 
   return (
     <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
@@ -19,7 +18,7 @@ export default function BookingSummary({ booking, onSubmit, onBack }) {
           <p className="font-medium text-gray-900">Services</p>
           <ul className="mt-1 text-gray-600 space-y-0.5">
             {selectedServiceObjs.map((s) => (
-              <li key={s.id}>• {s.name}</li>
+              <li key={s._id}>• {s.name}</li>
             ))}
           </ul>
         </div>
@@ -61,18 +60,24 @@ export default function BookingSummary({ booking, onSubmit, onBack }) {
         </div>
       </div>
 
+      {submitError && (
+        <p className="mt-4 text-sm text-red-500">{submitError}</p>
+      )}
+
       <button
         type="button"
         onClick={onSubmit}
-        className="mt-6 w-full py-3.5 rounded-full bg-pink-500 text-white text-sm font-semibold hover:bg-pink-600 active:scale-[0.99] transition"
+        disabled={isSubmitting}
+        className="mt-6 w-full py-3.5 rounded-full bg-pink-500 text-white text-sm font-semibold hover:bg-pink-600 active:scale-[0.99] transition disabled:opacity-40 disabled:cursor-not-allowed"
       >
-        Submit Booking
+        {isSubmitting ? "Submitting..." : "Submit Booking"}
       </button>
 
       <button
         type="button"
         onClick={onBack}
-        className="mt-3 w-full py-3.5 rounded-full border border-gray-200 bg-white text-sm font-semibold text-gray-900 hover:bg-gray-50 active:scale-[0.99] transition"
+        disabled={isSubmitting}
+        className="mt-3 w-full py-3.5 rounded-full border border-gray-200 bg-white text-sm font-semibold text-gray-900 hover:bg-gray-50 active:scale-[0.99] transition disabled:opacity-40"
       >
         Back
       </button>

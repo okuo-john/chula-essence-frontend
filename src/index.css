@@ -9,3 +9,7 @@
     --font-heading: "Playfair Display", serif;
     --font-body: "Poppins", sans-serif;
 }
+
+button{
+    cursor: pointer;
+}

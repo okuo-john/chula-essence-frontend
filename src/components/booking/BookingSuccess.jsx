@@ -1,7 +1,10 @@
 import BookingStepper from "./BookingStepper";
 import BookingStatus from "./BookingStatus";
+import { useNavigate } from "react-router-dom";
+
 
 export default function BookingSuccess({ onRestart }) {
+  const navigate = useNavigate();
   return (
     <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-100 p-6 text-center">
       <BookingStepper number={8} title="CONFIRMATION" />
@@ -31,12 +34,12 @@ export default function BookingSuccess({ onRestart }) {
       </p>
 
       <button
-        type="button"
-        onClick={onRestart}
-        className="mt-6 w-full py-3.5 rounded-full bg-pink-500 text-white text-sm font-semibold hover:bg-pink-600 active:scale-[0.99] transition"
-      >
-        View My Booking
-      </button>
+  type="button"
+  onClick={() => navigate("/my-bookings")}
+  className="mt-6 w-full py-3.5 rounded-full bg-pink-500 text-white text-sm font-semibold hover:bg-pink-600 active:scale-[0.99] transition"
+>
+  View My Booking
+</button>
     </div>
   );
 }

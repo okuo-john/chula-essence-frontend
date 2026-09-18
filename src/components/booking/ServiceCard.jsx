@@ -1,10 +1,10 @@
-import { formatNaira } from "./utils.jsx"
+import { formatNaira } from "./utils";
 
 export default function ServiceCard({ service, isChecked, onToggle }) {
   return (
     <button
       type="button"
-      onClick={() => onToggle(service.id)}
+      onClick={() => onToggle(service._id)}
       aria-pressed={isChecked}
       className="w-full flex items-center gap-3 py-3.5 text-left"
     >
@@ -28,12 +28,12 @@ export default function ServiceCard({ service, isChecked, onToggle }) {
         )}
       </span>
 
-      <span className="flex-1 text-sm font-medium text-gray-900">
-        {service.name}
+      <span className="flex-1 min-w-0">
+        <span className="block text-sm font-medium text-gray-900">{service.name}</span>
+        <span className="block text-xs text-gray-400">{service.duration} min</span>
       </span>
 
       <span className="text-sm text-gray-500 whitespace-nowrap">
-        {service.exact ? "" : "From "}
         {formatNaira(service.price)}
       </span>
     </button>

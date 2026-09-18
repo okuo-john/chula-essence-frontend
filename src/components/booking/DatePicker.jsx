@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { WEEKDAY_LABELS, MONTH_LABELS } from "./data";
-import { buildCalendarGrid } from "./utils";
+import { buildCalendarGrid } from "./utils.js";
 
 export default function DatePicker({ selectedDate, onSelectDate }) {
   const today = new Date();

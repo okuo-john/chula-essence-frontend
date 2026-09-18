@@ -20,3 +20,10 @@ export function buildCalendarGrid(year, month) {
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
   return cells;
 }
+export function convertTo24Hour(time12h) {
+  const [time, modifier] = time12h.split(" ");
+  let [hours, minutes] = time.split(":");
+  if (hours === "12") hours = "00";
+  if (modifier === "PM") hours = String(Number(hours) + 12);
+  return `${hours.padStart(2, "0")}:${minutes}`;
+}
