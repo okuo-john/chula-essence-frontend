@@ -32,12 +32,13 @@ export default function Services() {
     setError(null);
     try {
       if (editingService) {
-        await serviceApi.update(editingService._id, payload);
+        const updated = await serviceApi.update(editingService._id, payload);
+        setServices((prev) => prev.map((s) => (s._id === updated._id ? updated : s)));
       } else {
-        await serviceApi.create(payload);
+        const created = await serviceApi.create(payload);
+        setServices((prev) => [...prev, created]);
       }
       setEditingService(null);
-      await loadServices();
     } catch (err) {
       setError(err.response?.data?.message || "Couldn't save service.");
     } finally {
@@ -49,8 +50,8 @@ export default function Services() {
     if (!window.confirm("Deactivate this service?")) return;
     setError(null);
     try {
-      await serviceApi.deactivate(id);
-      await loadServices();
+      const updated = await serviceApi.deactivate(id);
+      setServices((prev) => prev.map((s) => (s._id === updated._id ? updated : s)));
     } catch (err) {
       setError(err.response?.data?.message || "Couldn't deactivate service.");
     }

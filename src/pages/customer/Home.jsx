@@ -8,6 +8,7 @@ import nailsImg from "../../assets/nails.png";
 import pedicureImg from "../../assets/pedicure.png";
 import wiggingImg from "../../assets/wigging.png";
 import { wigs } from "../../utils/mockWigs";
+import Testimonials from "./Testimonials";
 
 const API_BASE_URL = "https://server-chula-ess.onrender.com/api";
 
@@ -169,6 +170,7 @@ const Home = () => {
       {/* Testimonials */}
       <section id="testimonials" className="bg-white py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-6">
+          <Testimonials />
           <div className="text-center mb-12">
             <h2 className="font-heading text-3xl lg:text-4xl text-chula-black">What Our Clients Say</h2>
           </div>

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Search, ShoppingBag, Calendar, Menu, X } from "lucide-react";
 import chulaLogo from "../../assets/logos/chula-essence-logo.png";
 import { bookingApi } from "../../services/bookingApi";
+import { useCart } from "../../context/CartContext";
 
 function Navbar() {
   const location = useLocation();
@@ -10,6 +11,7 @@ function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [bookingCount, setBookingCount] = useState(0);
+  const { itemCount } = useCart();
 
   useEffect(() => {
     setIsLoggedIn(!!localStorage.getItem("token"));
@@ -52,8 +54,8 @@ function Navbar() {
     { name: "Home", path: "/" },
     { name: "Services", path: "/services" },
     { name: "Book a Service", path: "/book-service" },
-    { name: "Shop Wigs", path: "/shop-wigs" },
-    { name: "Testimonials", path: "/#testimonials" },
+    { name: "Shop Wigs", path: "/shop" },
+    { name: "Testimonials", path: "/testimonials" },
     { name: "Contact", path: "/contact" },
   ];
 
@@ -79,7 +81,7 @@ function Navbar() {
               <Link
                 key={link.name}
                 to={link.path}
-                className={`relative py-7 text-[15px] font-medium transition-colors ${
+                className={`relative py-7 text-[11px] font-medium transition-colors ${
                   isActive
                     ? "text-[#FF3B73]"
                     : "text-[#111111] hover:text-[#FF3B73]"
@@ -132,9 +134,11 @@ function Navbar() {
           >
             <ShoppingBag size={16} strokeWidth={1.8} />
 
-            <span className="absolute -top-1 -right-2 flex h-[13px] min-w-[13px] items-center justify-center rounded-full bg-[#FF3B73] px-1 text-[7px] text-white">
-              0
-            </span>
+            {itemCount > 0 && (
+              <span className="absolute -top-1 -right-2 flex h-[13px] min-w-[13px] items-center justify-center rounded-full bg-[#FF3B73] px-1 text-[7px] text-white">
+                {itemCount}
+              </span>
+            )}
 
             <span className="text-[9px] hidden sm:block">Cart</span>
           </Link>

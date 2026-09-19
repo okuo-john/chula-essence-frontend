@@ -8,6 +8,10 @@ import Services from "../pages/customer/Services";
 import ShopWigs from "../pages/customer/ShopWigs";
 import BookServices from "../pages/customer/BookService";
 import MyBookings from "../pages/customer/MyBookings";
+import ProductDetail from "../pages/customer/ProductDetails";
+import Cart from "../pages/customer/Cart";
+import Checkout from "../pages/customer/Checkout";
+import PaymentCallback from "../pages/customer/Payment";
 
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
@@ -58,6 +62,42 @@ function AppRoutes() {
         element={
           <CustomerLayout>
             <ShopWigs />
+          </CustomerLayout>
+        }
+      />
+
+      <Route
+        path="/shop/:productId"
+        element={
+          <CustomerLayout>
+            <ProductDetail />
+          </CustomerLayout>
+        }
+      />
+
+      <Route
+        path="/cart"
+        element={
+          <CustomerLayout>
+            <Cart />
+          </CustomerLayout>
+        }
+      />
+
+      <Route
+        path="/checkout"
+        element={
+          <CustomerLayout>
+            <Checkout />
+          </CustomerLayout>
+        }
+      />
+
+      <Route
+        path="/payment/callback"
+        element={
+          <CustomerLayout>
+            <PaymentCallback />
           </CustomerLayout>
         }
       />
