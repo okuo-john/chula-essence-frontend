@@ -44,13 +44,30 @@ export default function Testimonials() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
-      <h1 className="text-2xl font-semibold text-gray-900">Testimonials</h1>
-      <p className="mt-2 text-sm text-gray-500">
-        See what our customers are saying, or share your own experience.
-      </p>
+    <>
+      <div className="text-center mb-12">
+        <h2 className="font-heading text-3xl lg:text-4xl text-chula-black">What Our Clients Say</h2>
+        <p className="mt-3 font-body text-gray-600">
+          Real experiences from real clients — or share your own below.
+        </p>
+      </div>
 
-      <div className="mt-8">
+      {loading && <p className="text-center font-body text-sm text-gray-400">Loading testimonials...</p>}
+      {error && <p className="text-center font-body text-sm text-red-500">{error}</p>}
+
+      {!loading && !error && testimonials.length === 0 && (
+        <p className="text-center font-body text-sm text-gray-400">Be the first to leave a testimonial!</p>
+      )}
+
+      {!loading && !error && testimonials.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
+          {testimonials.map((t) => (
+            <TestimonialCard key={t._id} testimonial={t} />
+          ))}
+        </div>
+      )}
+
+      <div className="max-w-xl mx-auto">
         <TestimonialForm
           onSubmit={handleSubmit}
           isSaving={isSaving}
@@ -58,25 +75,6 @@ export default function Testimonials() {
           submitSuccess={submitSuccess}
         />
       </div>
-
-      <div className="mt-10">
-        <h2 className="text-base font-semibold text-gray-900 mb-4">What People Are Saying</h2>
-
-        {loading && <p className="text-sm text-gray-400">Loading testimonials...</p>}
-        {error && <p className="text-sm text-red-500">{error}</p>}
-
-        {!loading && !error && testimonials.length === 0 && (
-          <p className="text-sm text-gray-400">Be the first to leave a testimonial!</p>
-        )}
-
-        {!loading && !error && testimonials.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {testimonials.map((t) => (
-              <TestimonialCard key={t._id} testimonial={t} />
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+    </>
   );
 }

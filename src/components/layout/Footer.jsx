@@ -34,8 +34,8 @@ const Footer = () => {
         <div>
           <h4 className="font-body font-semibold mb-4">Get in Touch</h4>
           <ul className="space-y-2 font-body text-sm text-gray-400">
-            <li>0812 345 6789</li>
-            <li>hello@chulaessence.com</li>
+            <li>0916 351 5242</li>
+            <li>chulachula403@gmail.com</li>
             <li>@chula_essence</li>
           </ul>
           <a

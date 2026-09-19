@@ -54,9 +54,9 @@ function Navbar() {
     { name: "Home", path: "/" },
     { name: "Services", path: "/services" },
     { name: "Book a Service", path: "/book-service" },
-    { name: "Shop Wigs", path: "/shop" },
-    { name: "Testimonials", path: "/testimonials" },
-    { name: "Contact", path: "/contact" },
+    { name: "Shop Wigs", path: "/shop-wigs" },
+    { name: "Testimonials", path: "/#testimonials" },
+    { name: "Contact", path: "/#contact" },
   ];
 
   return (
