@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { bookingApi } from "../../services/bookingApi";
 import MyBookingCard from "../../components/booking/MyBookingCard";
+import { LoadingBookingRows } from "../../components/common/SkeletonLoader";
 
 export default function MyBookings() {
   const [bookings, setBookings] = useState([]);
@@ -28,7 +29,7 @@ export default function MyBookings() {
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10">
       <h1 className="text-xl font-semibold text-gray-900 mb-6">My Bookings</h1>
 
-      {loading && <p className="text-sm text-gray-400">Loading your bookings...</p>}
+      {loading && <LoadingBookingRows count={3} />}
 
       {error && <p className="text-sm text-red-500">{error}</p>}
 

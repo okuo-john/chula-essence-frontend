@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { testimonialApi } from "../../services/testimonialApi";
 import TestimonialCard from "../../components/customer/TestimonialCard";
 import TestimonialForm from "../../components/customer/TestimonialForm";
+import { SkeletonBlock } from "../../components/common/SkeletonLoader";
 
 export default function Testimonials() {
   const [testimonials, setTestimonials] = useState([]);
@@ -52,7 +53,26 @@ export default function Testimonials() {
         </p>
       </div>
 
-      {loading && <p className="text-center font-body text-sm text-gray-400">Loading testimonials...</p>}
+      {loading && (
+        <div className="mb-12 grid grid-cols-1 gap-6 sm:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div key={index} className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+              <div className="flex items-center gap-3">
+                <SkeletonBlock className="h-10 w-10 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <SkeletonBlock className="h-4 w-1/2" />
+                  <SkeletonBlock className="h-3 w-1/3" />
+                </div>
+              </div>
+              <div className="mt-4 space-y-2">
+                <SkeletonBlock className="h-3 w-full" />
+                <SkeletonBlock className="h-3 w-5/6" />
+                <SkeletonBlock className="h-3 w-2/3" />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
       {error && <p className="text-center font-body text-sm text-red-500">{error}</p>}
 
       {!loading && !error && testimonials.length === 0 && (

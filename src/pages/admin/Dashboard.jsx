@@ -1,36 +1,50 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
+import { adminOrderApi } from "../../services/adminOrderApi";
 import AdminHeader from "../../components/admin/AdminHeader";
 import StatCard from "../../components/admin/StatCard";
 import BookingTable from "../../components/admin/BookingTable";
+import { LoadingTableSkeleton } from "../../components/common/SkeletonLoader";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
+  const [totalBookings, setTotalBookings] = useState(0);
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function loadBookings() {
+    async function loadDashboardData() {
       setLoading(true);
       setError(null);
       try {
-        const res = await api.get("/bookings");
-        setBookings(res.data.data.slice(0, 5));
+        const [bookingsRes, ordersRes] = await Promise.all([
+          api.get("/bookings"),
+          adminOrderApi.getAll(),
+        ]);
+        const allBookings = bookingsRes.data.data;
+        setBookings(allBookings.slice(0, 5));
+        setTotalBookings(allBookings.length);
+        setOrders(ordersRes);
       } catch (err) {
-        setError(err.response?.data?.message || "Couldn't load recent bookings.");
+        setError(err.response?.data?.message || "Couldn't load dashboard data.");
       } finally {
         setLoading(false);
       }
     }
-    loadBookings();
+    loadDashboardData();
   }, []);
 
+  const totalRevenue = orders
+    .filter((order) => order.status !== "Cancelled")
+    .reduce((sum, order) => sum + Number(order.totalAmount ?? 0), 0);
+
   const stats = [
-    { label: "Total Bookings", value: bookings.length ? String(bookings.length) : "—" },
-    { label: "Total Orders", value: "—" },
-    { label: "Total Revenue", value: "—" },
+    { label: "Total Bookings", value: String(totalBookings) },
+    { label: "Total Orders", value: String(orders.length) },
+    { label: "Total Revenue", value: `₦${totalRevenue.toLocaleString()}` },
   ];
 
   return (
@@ -43,16 +57,18 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <div className="mt-6  rounded-xl p-5 border-gray-100 ">
-        <div className="flex items-center justify-between flex-col">
+      <div className="mt-6 w-full rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+        <div className="flex w-full flex-col">
           <h2 className="text-base font-semibold text-gray-900 mb-4">Recent Bookings</h2>
-          <BookingTable
-            bookings={bookings}
-            onConfirm={() => { }}
-            onReschedule={() => { }}
-            onCancel={() => { }}
-            onComplete={() => { }}
-          />
+          <div className="w-full min-w-0 overflow-hidden">
+            <BookingTable
+              bookings={bookings}
+              onConfirm={() => { }}
+              onReschedule={() => { }}
+              onCancel={() => { }}
+              onComplete={() => { }}
+            />
+          </div>
           <button
             type="button"
             onClick={() => navigate("/admin/bookings")}
@@ -63,9 +79,8 @@ export default function Dashboard() {
         </div>
 
         <div className="mt-2">
-          {loading && <p className="text-sm text-gray-400 py-4">Loading...</p>}
+          {loading && <LoadingTableSkeleton rows={3} columns={5} />}
           {error && <p className="text-sm text-red-500 py-4">{error}</p>}
-          
         </div>
       </div>
     </div>

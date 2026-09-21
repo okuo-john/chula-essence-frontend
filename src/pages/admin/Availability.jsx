@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { availabilityApi } from "../../services/availabilityApi";
 import AvailabilityForm from "../../components/admin/AvailabilityForm";
 import AvailabilityTable from "../../components/admin/AvailabilityTable";
+import { LoadingTableSkeleton } from "../../components/common/SkeletonLoader";
 
 export default function Availability() {
   const [records, setRecords] = useState([]);
@@ -75,7 +76,7 @@ export default function Availability() {
       />
 
       {loading ? (
-        <p className="text-sm text-gray-400">Loading availability...</p>
+        <LoadingTableSkeleton rows={5} columns={4} />
       ) : (
         <AvailabilityTable
           records={records}

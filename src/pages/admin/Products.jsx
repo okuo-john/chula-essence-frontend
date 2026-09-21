@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { productApi } from "../../services/productApi";
 import ProductForm from "../../components/admin/ProductForm";
 import ProductTable from "../../components/admin/ProductTable";
+import { LoadingTableSkeleton } from "../../components/common/SkeletonLoader";
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -75,7 +76,7 @@ export default function Products() {
       />
 
       {loading ? (
-        <p className="text-sm text-gray-400">Loading products...</p>
+        <LoadingTableSkeleton rows={5} columns={5} />
       ) : (
         <ProductTable products={products} onEdit={setEditingProduct} onDelete={handleDelete} />
       )}

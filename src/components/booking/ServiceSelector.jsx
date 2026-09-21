@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { bookingApi } from "../../services/bookingApi";
 import ServiceCard from "./ServiceCard";
+import { SkeletonBlock } from "../common/SkeletonLoader";
 
 export default function ServiceSelector({ selected, onToggle, onContinue }) {
   const [services, setServices] = useState([]);
@@ -39,7 +40,17 @@ export default function ServiceSelector({ selected, onToggle, onContinue }) {
       </p>
 
       {loading && (
-        <p className="mt-5 text-sm text-gray-400">Loading services...</p>
+        <div className="mt-5 space-y-3">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 p-3">
+              <SkeletonBlock className="h-5 w-5 rounded" />
+              <div className="flex-1 space-y-2">
+                <SkeletonBlock className="h-4 w-2/3" />
+                <SkeletonBlock className="h-3 w-1/2" />
+              </div>
+            </div>
+          ))}
+        </div>
       )}
 
       {error && (

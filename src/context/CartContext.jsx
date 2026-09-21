@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { toast } from "react-toastify";
 import { cartApi } from "../services/cartApi";
 
 const CartContext = createContext(null);
@@ -37,6 +38,7 @@ export function CartProvider({ children }) {
     try {
       const cart = await cartApi.addToCart(productId, quantity);
       setItems(cart.items ?? []);
+      toast.success("Product added to cart.");
     } catch (err) {
       setError(err.response?.data?.message || "Couldn't add item to cart.");
       throw err;

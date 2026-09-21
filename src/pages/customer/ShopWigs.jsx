@@ -29,6 +29,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { productApi } from "../../services/productApi";
 import ProductCard from "../../components/products/ProductCard";
+import { LoadingProductCards } from "../../components/common/SkeletonLoader";
 
 export default function ShopWigs() {
   const [products, setProducts] = useState([]);
@@ -72,7 +73,7 @@ export default function ShopWigs() {
         Browse our wig collection and get one delivered to you.
       </p>
 
-      {loading && <p className="mt-8 text-sm text-gray-400">Loading products...</p>}
+      {loading && <LoadingProductCards count={4} />}
 
       {error && <p className="mt-8 text-sm text-red-500">{error}</p>}
 
@@ -85,11 +86,10 @@ export default function ShopWigs() {
                   key={category}
                   type="button"
                   onClick={() => setActiveCategory(category)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                    activeCategory === category
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${activeCategory === category
                       ? "bg-pink-500 text-white"
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
+                    }`}
                 >
                   {category}
                 </button>

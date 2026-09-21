@@ -38,14 +38,6 @@ const NAV_ITEMS = [
     )
   },
   {
-    path: "/admin/location", label: "Location", icon: (
-      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 21s-6.5-5.6-6.5-11A6.5 6.5 0 0 1 18.5 10c0 5.4-6.5 11-6.5 11Z" />
-        <circle cx="12" cy="10" r="2.2" />
-      </svg>
-    )
-  },
-  {
     path: "/admin/products", label: "Products", icon: (
       <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
         <rect x="4" y="7" width="16" height="13" rx="2" />

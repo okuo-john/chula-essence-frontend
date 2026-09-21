@@ -14,7 +14,7 @@ const STATUS_STYLES = {
 
 function formatDate(isoDate) {
   const d = new Date(isoDate);
-  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
@@ -41,8 +41,8 @@ export default function BookingTable({ bookings, onConfirm, onReschedule, onCanc
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-x-auto">
-      <table className="w-full text-sm">
+    <div className="w-full max-w-full overflow-x-auto rounded-xl border border-gray-100 bg-white shadow-sm">
+      <table className="w-full min-w-[720px] text-sm">
         <thead>
           <tr className="border-b border-gray-100 text-left text-xs font-medium text-gray-500">
             <th className="px-5 py-3">Customer</th>
@@ -60,7 +60,7 @@ export default function BookingTable({ bookings, onConfirm, onReschedule, onCanc
               <td className="px-5 py-3 font-medium text-gray-900 whitespace-nowrap">
                 {customerLabel(booking.customer)}
               </td>
-              <td className="px-5 py-3 text-gray-600 max-w-[200px] truncate">
+              <td className="px-5 py-3 text-gray-600 max-w-52 truncate">
                 {servicesLabel(booking.services)}
               </td>
               <td className="px-5 py-3 text-gray-600 whitespace-nowrap">

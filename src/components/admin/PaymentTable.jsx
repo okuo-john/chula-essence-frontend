@@ -1,4 +1,4 @@
-import OrderStatusBadge from "./OrderStatusBadge";
+import PaymentStatusBadge from "./PaymentStatusBadge";
 
 function customerLabel(customer) {
   if (!customer) return "Unknown customer";
@@ -12,11 +12,11 @@ function formatDate(isoDate) {
   return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
-export default function OrderTable({ orders, onViewDetails }) {
-  if (orders.length === 0) {
+export default function PaymentTable({ payments, onViewDetails }) {
+  if (payments.length === 0) {
     return (
       <div className="bg-white rounded-xl border border-dashed border-gray-200 p-10 text-center text-sm text-gray-400">
-        No orders yet.
+        No payments yet.
       </div>
     );
   }
@@ -26,36 +26,40 @@ export default function OrderTable({ orders, onViewDetails }) {
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-gray-100 text-left text-xs font-medium text-gray-500">
+            <th className="px-5 py-3">Reference</th>
             <th className="px-5 py-3">Customer</th>
-            <th className="px-5 py-3">Items</th>
+            <th className="px-5 py-3">Amount</th>
+            <th className="px-5 py-3">Channel</th>
             <th className="px-5 py-3">Date</th>
-            <th className="px-5 py-3">Total</th>
             <th className="px-5 py-3">Status</th>
             <th className="px-5 py-3"></th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
-          {orders.map((order) => (
-            <tr key={order._id}>
+          {payments.map((payment) => (
+            <tr key={payment._id}>
+              <td className="px-5 py-3 font-mono text-xs text-gray-600 whitespace-nowrap">
+                {payment.reference}
+              </td>
               <td className="px-5 py-3 font-medium text-gray-900 whitespace-nowrap">
-                {customerLabel(order.customer)}
-              </td>
-              <td className="px-5 py-3 text-gray-600 max-w-[220px] truncate">
-                {order.items.map((item) => `${item.productName} ×${item.quantity}`).join(", ")}
+                {customerLabel(payment.customer)}
               </td>
               <td className="px-5 py-3 text-gray-600 whitespace-nowrap">
-                {formatDate(order.createdAt)}
+                ₦{(payment.amount / 100).toLocaleString()}
+              </td>
+              <td className="px-5 py-3 text-gray-600 capitalize">
+                {payment.channel || "—"}
               </td>
               <td className="px-5 py-3 text-gray-600 whitespace-nowrap">
-                ₦{Number(order.totalAmount).toLocaleString()}
+                {formatDate(payment.createdAt)}
               </td>
               <td className="px-5 py-3">
-                <OrderStatusBadge status={order.status} />
+                <PaymentStatusBadge status={payment.status} />
               </td>
               <td className="px-5 py-3 text-right whitespace-nowrap">
                 <button
                   type="button"
-                  onClick={() => onViewDetails(order)}
+                  onClick={() => onViewDetails(payment)}
                   className="text-pink-500 font-medium hover:text-pink-600"
                 >
                   View

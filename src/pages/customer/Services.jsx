@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { bookingApi } from "../../services/bookingApi";
 import ServiceListCard from "../../components/customer/ServiceListCard";
+import { LoadingServiceCards } from "../../components/common/SkeletonLoader";
 
 export default function Services() {
   const [services, setServices] = useState([]);
@@ -41,7 +42,7 @@ export default function Services() {
         Browse everything we offer and book the ones you need.
       </p>
 
-      {loading && <p className="mt-8 text-sm text-gray-400">Loading services...</p>}
+      {loading && <LoadingServiceCards count={6} />}
 
       {error && <p className="mt-8 text-sm text-red-500">{error}</p>}
 
@@ -54,11 +55,10 @@ export default function Services() {
                   key={category}
                   type="button"
                   onClick={() => setActiveCategory(category)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                    activeCategory === category
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${activeCategory === category
                       ? "bg-pink-500 text-white"
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
+                    }`}
                 >
                   {category}
                 </button>

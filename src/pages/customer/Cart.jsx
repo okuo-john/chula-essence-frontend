@@ -1,13 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import CartItemRow from "../../components/cart/CartItemRow";
+import { LoadingCartSkeleton } from "../../components/common/SkeletonLoader";
 
 export default function Cart() {
   const { items, loading, error, updateQuantity, removeFromCart, subtotal } = useCart();
   const navigate = useNavigate();
 
   if (loading) {
-    return <p className="max-w-2xl mx-auto px-4 sm:px-6 py-16 text-sm text-gray-400">Loading your cart...</p>;
+    return <LoadingCartSkeleton />;
   }
 
   if (error) {

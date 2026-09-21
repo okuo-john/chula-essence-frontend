@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { testimonialApi } from "../../services/testimonialApi";
 import TestimonialTable from "../../components/admin/TestimonialTable";
+import { LoadingTableSkeleton } from "../../components/common/SkeletonLoader";
 
 export default function Testimonials() {
   const [testimonials, setTestimonials] = useState([]);
@@ -38,7 +39,7 @@ export default function Testimonials() {
       )}
 
       {loading ? (
-        <p className="text-sm text-gray-400">Loading testimonials...</p>
+        <LoadingTableSkeleton rows={5} columns={4} />
       ) : (
         <TestimonialTable testimonials={testimonials} />
       )}

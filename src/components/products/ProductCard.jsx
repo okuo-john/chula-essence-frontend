@@ -1,9 +1,28 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import { useCart } from "../../context/CartContext";
 
-export default function ProductCard({ product, onAddToCart }) {
-     const { addToCart } = useCart();
+export default function ProductCard({ product }) {
+  const { addToCart, items } = useCart();
+  const [error, setError] = useState(null);
+  const [isAdding, setIsAdding] = useState(false);
+
+  const cartItem = items.find((item) => item.product._id === product._id);
+  const quantityInCart = cartItem?.quantity ?? 0;
   const outOfStock = !product.isAvailable || product.stock === 0;
+  const atMaxStock = quantityInCart >= product.stock;
+
+  async function handleAddToCart() {
+    setError(null);
+    setIsAdding(true);
+    try {
+      await addToCart(product._id, 1);
+    } catch (err) {
+      setError(err.response?.data?.message || "Couldn't add to cart.");
+    } finally {
+      setIsAdding(false);
+    }
+  }
 
   return (
     <div className="relative bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
@@ -38,6 +57,8 @@ export default function ProductCard({ product, onAddToCart }) {
           {outOfStock ? "Unavailable" : `Available: ${product.stock}`}
         </p>
 
+        {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+
         <div className="mt-4 flex gap-2">
           <Link
             to={`/shop/${product._id}`}
@@ -47,11 +68,17 @@ export default function ProductCard({ product, onAddToCart }) {
           </Link>
           <button
             type="button"
-            disabled={outOfStock}
-            onClick={() => addToCart(product._id)}
-            className="flex-1 rounded-full bg-pink-500 px-3 py-2 text-xs font-semibold text-white transition hover:bg-pink-600 disabled:opacity-40 disabled:cursor-not-allowed"
+            disabled={outOfStock || atMaxStock || isAdding}
+            onClick={handleAddToCart}
+            className="flex-1 flex items-center justify-center gap-1.5 rounded-full bg-pink-500 px-3 py-2 text-xs font-semibold text-white transition hover:bg-pink-600 disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            Add to Cart
+            {isAdding && (
+              <svg className="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+              </svg>
+            )}
+            {isAdding ? "Adding..." : atMaxStock ? "Max in Cart" : "Add to Cart"}
           </button>
         </div>
       </div>

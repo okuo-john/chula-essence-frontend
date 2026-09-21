@@ -3,6 +3,7 @@ import { adminBookingApi } from "../../services/adminBookingApi";
 import BookingTable from "../../components/admin/BookingTable";
 import RescheduleBookingModal from "../../components/admin/RescheduleBookingModal";
 import CancelBookingModal from "../../components/admin/CancelBookingModal";
+import { LoadingTableSkeleton } from "../../components/common/SkeletonLoader";
 import { toast } from "react-toastify";
 
 export default function Bookings() {
@@ -33,52 +34,52 @@ export default function Bookings() {
   }
 
   async function handleConfirm(booking) {
-  setActionError(null);
-  try {
-    const updated = await adminBookingApi.confirm(booking._id);
-    setBookings((prev) => prev.map((b) => (b._id === updated._id ? updated : b)));
-  } catch (err) {
-    toast.error(err.response?.data?.message || "Couldn't confirm booking.");
+    setActionError(null);
+    try {
+      const updated = await adminBookingApi.confirm(booking._id);
+      setBookings((prev) => prev.map((b) => (b._id === updated._id ? updated : b)));
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Couldn't confirm booking.");
+    }
   }
-}
 
-async function handleComplete(booking) {
-  setActionError(null);
-  try {
-    const updated = await adminBookingApi.complete(booking._id);
-    setBookings((prev) => prev.map((b) => (b._id === updated._id ? updated : b)));
-  } catch (err) {
-    toast.error(err.response?.data?.message || "Couldn't complete booking.");
+  async function handleComplete(booking) {
+    setActionError(null);
+    try {
+      const updated = await adminBookingApi.complete(booking._id);
+      setBookings((prev) => prev.map((b) => (b._id === updated._id ? updated : b)));
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Couldn't complete booking.");
+    }
   }
-}
 
-async function handleRescheduleSubmit(payload) {
-  setIsSaving(true);
-  setActionError(null);
-  try {
-    const updated = await adminBookingApi.reschedule(reschedulingBooking._id, payload);
-    setBookings((prev) => prev.map((b) => (b._id === updated._id ? updated : b)));
-    setReschedulingBooking(null);
-  } catch (err) {
-    toast.error(err.response?.data?.message || "Couldn't reschedule booking.");
-  } finally {
-    setIsSaving(false);
+  async function handleRescheduleSubmit(payload) {
+    setIsSaving(true);
+    setActionError(null);
+    try {
+      const updated = await adminBookingApi.reschedule(reschedulingBooking._id, payload);
+      setBookings((prev) => prev.map((b) => (b._id === updated._id ? updated : b)));
+      setReschedulingBooking(null);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Couldn't reschedule booking.");
+    } finally {
+      setIsSaving(false);
+    }
   }
-}
 
-async function handleCancelSubmit(payload) {
-  setIsSaving(true);
-  setActionError(null);
-  try {
-    const updated = await adminBookingApi.cancel(cancellingBooking._id, payload);
-    setBookings((prev) => prev.map((b) => (b._id === updated._id ? updated : b)));
-    setCancellingBooking(null);
-  } catch (err) {
-    setActionError(err.response?.data?.message || "Couldn't cancel booking.");
-  } finally {
-    setIsSaving(false);
+  async function handleCancelSubmit(payload) {
+    setIsSaving(true);
+    setActionError(null);
+    try {
+      const updated = await adminBookingApi.cancel(cancellingBooking._id, payload);
+      setBookings((prev) => prev.map((b) => (b._id === updated._id ? updated : b)));
+      setCancellingBooking(null);
+    } catch (err) {
+      setActionError(err.response?.data?.message || "Couldn't cancel booking.");
+    } finally {
+      setIsSaving(false);
+    }
   }
-}
 
   return (
     <div>
@@ -91,7 +92,7 @@ async function handleCancelSubmit(payload) {
       )}
 
       {loading ? (
-        <p className="text-sm text-gray-400">Loading bookings...</p>
+        <LoadingTableSkeleton rows={5} columns={5} />
       ) : (
         <BookingTable
           bookings={bookings}

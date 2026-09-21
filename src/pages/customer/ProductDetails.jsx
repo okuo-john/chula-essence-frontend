@@ -2,16 +2,18 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { productApi } from "../../services/productApi";
 import { useCart } from "../../context/CartContext";
+import { LoadingDetailSkeleton } from "../../components/common/SkeletonLoader";
 
 export default function ProductDetail() {
   const { productId } = useParams();
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const { addToCart, items } = useCart();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [addError, setAddError] = useState(null);
 
   useEffect(() => {
     async function loadProduct() {
@@ -29,12 +31,17 @@ export default function ProductDetail() {
     loadProduct();
   }, [productId]);
 
-  function handleAddToCart() {
-  addToCart(product._id, quantity);
-}
+  async function handleAddToCart() {
+    setAddError(null);
+    try {
+      await addToCart(product._id, quantity);
+    } catch (err) {
+      setAddError(err.response?.data?.message || "Couldn't add to cart.");
+    }
+  }
 
   if (loading) {
-    return <p className="max-w-4xl mx-auto px-4 sm:px-6 py-10 text-sm text-gray-400">Loading product...</p>;
+    return <LoadingDetailSkeleton />;
   }
 
   if (error) {
@@ -45,7 +52,11 @@ export default function ProductDetail() {
     return null;
   }
 
+  const cartItem = items.find((item) => item.product._id === product._id);
+  const quantityInCart = cartItem?.quantity ?? 0;
+  const remainingStock = product.stock - quantityInCart;
   const outOfStock = !product.isAvailable || product.stock === 0;
+  const atMaxStock = !outOfStock && remainingStock <= 0;
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
@@ -96,6 +107,10 @@ export default function ProductDetail() {
             {outOfStock ? "Currently unavailable" : `${product.stock} in stock`}
           </p>
 
+          {quantityInCart > 0 && (
+            <p className="mt-1 text-xs text-gray-400">{quantityInCart} already in your cart</p>
+          )}
+
           {!outOfStock && (
             <div className="mt-5 flex items-center gap-3">
               <div className="flex items-center border border-gray-200 rounded-full">
@@ -110,8 +125,9 @@ export default function ProductDetail() {
                 <span className="w-8 text-center text-sm font-medium">{quantity}</span>
                 <button
                   type="button"
-                  onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
-                  className="w-9 h-9 flex items-center justify-center text-gray-600 hover:text-pink-500"
+                  onClick={() => setQuantity((q) => Math.min(remainingStock, q + 1))}
+                  disabled={atMaxStock}
+                  className="w-9 h-9 flex items-center justify-center text-gray-600 hover:text-pink-500 disabled:opacity-30"
                   aria-label="Increase quantity"
                 >
                   +
@@ -120,13 +136,15 @@ export default function ProductDetail() {
             </div>
           )}
 
+          {addError && <p className="mt-3 text-sm text-red-500">{addError}</p>}
+
           <button
             type="button"
-            disabled={outOfStock}
+            disabled={outOfStock || atMaxStock}
             onClick={handleAddToCart}
             className="mt-5 w-full sm:w-auto px-8 rounded-full bg-pink-500 text-white text-sm font-semibold py-3 hover:bg-pink-600 transition disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            {outOfStock ? "Unavailable" : "Add to Cart"}
+            {atMaxStock ? "Max in Cart" : outOfStock ? "Unavailable" : "Add to Cart"}
           </button>
         </div>
       </div>

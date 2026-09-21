@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { serviceApi } from "../../services/serviceApi";
 import ServiceForm from "../../components/admin/ServiceForm";
 import ServiceTable from "../../components/admin/ServiceTable";
+import { LoadingTableSkeleton } from "../../components/common/SkeletonLoader";
 
 export default function Services() {
   const [services, setServices] = useState([]);
@@ -75,7 +76,7 @@ export default function Services() {
       />
 
       {loading ? (
-        <p className="text-sm text-gray-400">Loading services...</p>
+        <LoadingTableSkeleton rows={5} columns={5} />
       ) : (
         <ServiceTable
           services={services}
