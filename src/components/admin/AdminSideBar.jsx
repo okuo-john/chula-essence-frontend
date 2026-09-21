@@ -87,7 +87,7 @@ export default function AdminSideBar() {
         type="button"
         onClick={() => setIsOpen(true)}
         aria-label="Open navigation menu"
-        className="fixed left-4 top-4 z-40 flex h-11 w-11 items-center justify-center rounded-lg bg-white text-gray-600 shadow-md ring-1 ring-gray-200 transition-colors hover:text-pink-500 lg:hidden"
+        className="fixed left-4 top-4 z-40 flex h-11 w-11 items-center justify-center rounded-lg bg-white text-gray-600 shadow-md ring-1 ring-gray-200 transition-colors hover:text-pink-500 dark:bg-slate-800 dark:text-slate-100 dark:ring-gray-700 lg:hidden"
       >
         <Menu size={22} />
       </button>
@@ -102,7 +102,7 @@ export default function AdminSideBar() {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col overflow-y-auto bg-white px-3 py-6 shadow-xl transition-transform duration-200 lg:sticky lg:top-0 lg:z-auto lg:h-screen lg:w-56 lg:shrink-0 lg:translate-x-0 lg:bg-white/60 lg:shadow-none ${isOpen ? "translate-x-0" : "-translate-x-full"
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col overflow-y-auto bg-white px-3 py-6 shadow-xl transition-transform duration-200 dark:bg-slate-900 dark:text-slate-100 lg:sticky lg:top-0 lg:z-auto lg:h-screen lg:w-56 lg:shrink-0 lg:translate-x-0 lg:bg-white/60 lg:shadow-none lg:dark:bg-slate-900/80 ${isOpen ? "translate-x-0" : "-translate-x-full"
           }`}
       >
         <button
@@ -122,7 +122,7 @@ export default function AdminSideBar() {
               end={item.end}
               onClick={() => setIsOpen(false)}
               className={({ isActive }) =>
-                `w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive ? "text-pink-500" : "text-gray-500 hover:bg-gray-50"
+                `w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive ? "text-pink-500" : "text-gray-500 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800"
                 }`
               }
             >

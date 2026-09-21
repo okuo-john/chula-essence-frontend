@@ -1,9 +1,10 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Search, ShoppingBag, Calendar, Menu, X } from "lucide-react";
+import { Search, ShoppingBag, Calendar, Menu, X, SunMedium, MoonStar } from "lucide-react";
 import chulaLogo from "../../assets/logos/chula-essence-logo.png";
 import { bookingApi } from "../../services/bookingApi";
 import { useCart } from "../../context/CartContext";
+import { useTheme } from "../../context/ThemeContext";
 
 function Navbar() {
   const location = useLocation();
@@ -12,6 +13,7 @@ function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [bookingCount, setBookingCount] = useState(0);
   const { itemCount } = useCart();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     setIsLoggedIn(!!localStorage.getItem("token"));
@@ -37,7 +39,7 @@ function Navbar() {
       .then((bookings) => {
         if (!cancelled) setBookingCount(bookings.length);
       })
-      .catch(() => {});
+      .catch(() => { });
     return () => {
       cancelled = true;
     };
@@ -60,7 +62,7 @@ function Navbar() {
   ];
 
   return (
-    <nav className="w-full bg-white border-b border-gray-100 relative">
+    <nav className="w-full border-b border-gray-100 bg-white relative dark:border-gray-700 dark:bg-slate-900">
       <div className="max-w-[1200px] mx-auto h-[72px] px-4 sm:px-6 flex items-center justify-between">
 
         {/* Logo */}
@@ -81,11 +83,10 @@ function Navbar() {
               <Link
                 key={link.name}
                 to={link.path}
-                className={`relative py-7 text-[11px] font-medium transition-colors ${
-                  isActive
+                className={`relative py-7 text-[11px] font-medium transition-colors ${isActive
                     ? "text-[#FF3B73]"
-                    : "text-[#111111] hover:text-[#FF3B73]"
-                }`}
+                    : "text-[#111111] hover:text-[#FF3B73] dark:text-slate-100 dark:hover:text-[#FF3B73]"
+                  }`}
               >
                 {link.name}
 
@@ -103,7 +104,16 @@ function Navbar() {
           {/* Search — hidden on very small screens */}
           <button
             type="button"
-            className="hidden sm:flex flex-col items-center gap-1 text-[#111111] hover:text-[#FF3B73] transition-colors"
+            onClick={toggleTheme}
+            className="flex items-center justify-center rounded-full border border-gray-200 bg-white p-2 text-[#111111] transition-colors hover:text-[#FF3B73] dark:border-gray-700 dark:bg-slate-800 dark:text-slate-100"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <SunMedium size={16} /> : <MoonStar size={16} />}
+          </button>
+
+          <button
+            type="button"
+            className="hidden sm:flex flex-col items-center gap-1 text-[#111111] hover:text-[#FF3B73] transition-colors dark:text-slate-100"
           >
             <Search size={16} strokeWidth={1.8} />
             <span className="text-[9px]">Search</span>
@@ -113,7 +123,7 @@ function Navbar() {
           {isLoggedIn && (
             <Link
               to="/my-bookings"
-              className="relative flex flex-col items-center gap-1 text-[#111111] hover:text-[#FF3B73] transition-colors"
+              className="relative flex flex-col items-center gap-1 text-[#111111] hover:text-[#FF3B73] transition-colors dark:text-slate-100"
             >
               <Calendar size={16} strokeWidth={1.8} />
 
@@ -179,7 +189,7 @@ function Navbar() {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="lg:hidden absolute top-[72px] left-0 right-0 bg-white border-b border-gray-100 shadow-sm z-50">
+        <div className="lg:hidden absolute top-[72px] left-0 right-0 border-b border-gray-100 bg-white shadow-sm z-50 dark:border-gray-700 dark:bg-slate-900">
           <div className="flex flex-col px-6 py-4">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.path;
@@ -187,9 +197,8 @@ function Navbar() {
                 <Link
                   key={link.name}
                   to={link.path}
-                  className={`py-3 text-sm font-medium border-b border-gray-50 last:border-b-0 ${
-                    isActive ? "text-[#FF3B73]" : "text-[#111111]"
-                  }`}
+                  className={`py-3 text-sm font-medium border-b border-gray-50 last:border-b-0 dark:border-gray-700 ${isActive ? "text-[#FF3B73]" : "text-[#111111] dark:text-slate-100"
+                    }`}
                 >
                   {link.name}
                 </Link>
@@ -199,7 +208,7 @@ function Navbar() {
             {isLoggedIn && (
               <Link
                 to="/my-bookings"
-                className="py-3 text-sm font-medium text-[#111111] border-b border-gray-50 flex items-center justify-between"
+                className="py-3 text-sm font-medium text-[#111111] border-b border-gray-50 flex items-center justify-between dark:border-gray-700 dark:text-slate-100"
               >
                 My Bookings
                 {bookingCount > 0 && (
