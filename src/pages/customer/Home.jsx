@@ -89,11 +89,11 @@ const Home = () => {
     <>
       <section className="bg-white">
         <div className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 lg:px-8">
-          <div className="relative min-h-[550px] overflow-hidden rounded-lg bg-[#fff0f6] lg:min-h-[600px]">
+          <div className="relative min-h-[420px] sm:min-h-[550px] overflow-hidden rounded-lg bg-[#fff0f6] lg:min-h-[600px]">
             <img
               src={heroImage}
               alt="Chula Essence beauty model"
-              className="absolute inset-0 h-full w-full object-cover object-right"
+              className="absolute inset-0 h-full w-full object-cover object-[75%_15%] sm:object-right"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-[#fff0f6] via-[#fff0f6]/40 to-transparent" />
             <div className="relative z-10 flex min-h-[620px] items-center lg:min-h-[650px]">
@@ -109,16 +109,16 @@ const Home = () => {
                   Professional beauty services and premium wigs that bring out
                   the best in you. Luxury. Quality. You.
                 </p>
-                <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <Link
                     to="/book-service"
-                    className="inline-flex items-center justify-center rounded-full bg-primary-pink px-8 py-3 font-body font-semibold text-white shadow-sm transition duration-200 hover:bg-pink-600"
+                    className="inline-flex items-center justify-center rounded-full bg-primary-pink px-8 py-3 font-body font-semibold text-white shadow-lg shadow-primary-pink/30 transition duration-200 hover:bg-pink-600"
                   >
                     Book a Service
                   </Link>
                   <Link
                     to="/shop-wigs"
-                    className="inline-flex items-center justify-center rounded-full border border-chula-black bg-white/80 px-8 py-3 font-body font-semibold text-chula-black transition duration-200 hover:bg-chula-black hover:text-white"
+                    className="inline-flex items-center justify-center rounded-full border border-chula-black bg-white px-8 py-3 font-body font-semibold text-chula-black shadow-lg transition duration-200 hover:bg-chula-black hover:text-white"
                   >
                     Shop Wigs
                   </Link>
@@ -287,18 +287,26 @@ const Home = () => {
                 </h3>
               </div>
               <p className="font-body text-sm text-gray-600">
-                15 Example Street, Benin City, Edo State.
+                Country home road, Benin City, Edo State.
               </p>
               <p className="font-body text-sm text-gray-500 mt-1">
-                Landmark: Near Example Shopping Complex
+                Landmark: Opposite Agip Filling Station, Sapele Road.
               </p>
 
-              <div className="mt-4 flex-1 min-h-[160px] rounded-xl bg-soft-pink flex items-center justify-center">
-                <MapPin size={28} className="text-primary-pink" />
+              <div className="mt-4 flex-1 min-h-[200px] rounded-xl overflow-hidden">
+                <iframe
+                  title="Chula Essence Location"
+                  src="https://www.google.com/maps?q=Country+Home+Road+Benin+City+Edo+State&output=embed"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
               </div>
 
               <a
-                href="https://www.google.com/maps/search/?api=1&query=15+Example+Street+Benin+City+Edo+State"
+                href="https://www.google.com/maps/search/?api=1&query=Country+Home+Road+Benin+City+Edo+State"
                 target="_blank"
                 rel="noreferrer"
                 className="mt-4 block text-center rounded-full border border-primary-pink px-4 py-2 font-body text-sm font-semibold text-primary-pink transition hover:bg-primary-pink hover:text-white"
