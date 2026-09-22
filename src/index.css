@@ -1,1 +1,117 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary-pink: #ff6baa;
+  --color-gold: #ffd700;
+  --color-soft-pink: #fff0f6;
+  --color-chula-black: #111111;
+
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Poppins", sans-serif;
+}
+
+:root {
+  --bg: #f8f8f8;
+  --bg-elevated: #ffffff;
+  --surface: #f3f4f6;
+  --surface-strong: #e5e7eb;
+  --text: #111827;
+  --text-soft: #6b7280;
+  --text-muted: #9ca3af;
+  --border: #e5e7eb;
+  --pink: #ff6baa;
+  --pink-strong: #ec4899;
+}
+
+:root.dark {
+  --bg: #111827;
+  --bg-elevated: #1f2937;
+  --surface: #111827;
+  --surface-strong: #374151;
+  --text: #f9fafb;
+  --text-soft: #d1d5db;
+  --text-muted: #9ca3af;
+  --border: #374151;
+  --pink: #ff6baa;
+  --pink-strong: #f472b6;
+}
+
+html {
+  background-color: var(--bg);
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+button {
+  cursor: pointer;
+}
+
+#root {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+.dark .bg-white {
+  background-color: var(--bg-elevated) !important;
+}
+
+.dark .bg-gray-50,
+.dark .bg-gray-100,
+.dark .bg-soft-pink {
+  background-color: rgba(31, 41, 55, 0.8) !important;
+}
+
+.dark .text-gray-900,
+.dark .text-chula-black,
+.dark .text-gray-700,
+.dark .text-gray-600,
+.dark .text-gray-500,
+.dark .text-gray-800 {
+  color: var(--text) !important;
+}
+
+.dark .text-gray-400,
+.dark .text-gray-500 {
+  color: var(--text-soft) !important;
+}
+
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-slate-200,
+.dark .border-gray-50 {
+  border-color: var(--border) !important;
+}
+
+.dark .bg-red-50,
+.dark .bg-green-50,
+.dark .bg-amber-100,
+.dark .bg-blue-100,
+.dark .bg-gray-100,
+.dark .bg-gray-200 {
+  background-color: rgba(31, 41, 55, 0.9) !important;
+}
+
+.dark .bg-pink-50 {
+  background-color: rgba(255, 107, 170, 0.12) !important;
+}
+
+.dark .text-red-600,
+.dark .text-green-600,
+.dark .text-amber-600,
+.dark .text-blue-600 {
+  color: var(--text) !important;
+}
+
+.dark .shadow-sm,
+.dark .shadow-md,
+.dark .shadow-lg {
+  box-shadow: none !important;
+}
