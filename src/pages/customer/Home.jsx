@@ -201,7 +201,7 @@ const Home = () => {
               to="/shop-wigs"
               className="bg-white inline-block rounded-full border border-chula-black px-8 py-3 font-body font-semibold text-chula-black transition hover:bg-chula-black hover:text-white"
             >
-              View All Wigs
+              View More Wigs
             </Link>
           </div>
         </div>
