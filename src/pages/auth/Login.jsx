@@ -67,7 +67,7 @@ function Login() {
                     placeholder="you@gmail.com"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full rounded border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition placeholder:text-slate-400 focus:border-[#ff68aa] " />
+                    className="w-full rounded border text-black border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition placeholder:text-slate-400 focus:border-[#ff68aa] " />
                 </div>
 
                 <div className="md:col-span-2 relative">
@@ -78,13 +78,13 @@ function Login() {
                     placeholder="* * * * * * *"
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full rounded border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition placeholder:text-slate-400 placeholder:font-bold focus:border-[#ff68aa] " />
+                    className="w-full rounded border text-black border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition placeholder:text-slate-400 placeholder:font-bold focus:border-[#ff68aa] " />
 
 
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-11 -translate-y-1/2"
+                    className="absolute right-3 top-11 -translate-y-1/2 text-black"
                   >
                     {showPassword ? <Eye className="h-4 w-4" /> : <EyeClosed className="h-4 w-4 " />}
                   </button>

@@ -98,14 +98,14 @@ const Home = () => {
             <div className="absolute inset-0 bg-gradient-to-r from-[#fff0f6] via-[#fff0f6]/40 to-transparent" />
             <div className="relative z-10 flex min-h-[620px] items-center lg:min-h-[650px]">
               <div className="px-8 sm:px-12 lg:text-left">
-                <h1 className="font-heading text-4xl leading-tight text-chula-black sm:text-5xl lg:text-6xl">
+                <h1 className="font-heading text-4xl leading-tight text-black sm:text-5xl lg:text-6xl">
                   Your Beauty.
                   <br />
                   Your Confidence.
                   <br />
                   Your <span className="text-primary-pink">Essence.</span>
                 </h1>
-                <p className="mt-6 max-w-md font-body text-base sm:text-lg text-gray-600 lg-mx-0">
+                <p className="mt-6 max-w-md font-body sm:text-lg text-black lg-mx-0">
                   Professional beauty services and premium wigs that bring out
                   the best in you. Luxury. Quality. You.
                 </p>
