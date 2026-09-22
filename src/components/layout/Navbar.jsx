@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Search, ShoppingBag, Calendar, Menu, X, SunMedium, MoonStar } from "lucide-react";
+import { Search, ShoppingBag, Calendar, Menu, X, SunMedium, MoonStar, LayoutDashboard } from "lucide-react";
 import chulaLogo from "../../assets/logos/chula-essence-logo.png";
 import { bookingApi } from "../../services/bookingApi";
 import { useCart } from "../../context/CartContext";
@@ -10,6 +10,7 @@ function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [bookingCount, setBookingCount] = useState(0);
   const { itemCount } = useCart();
@@ -17,12 +18,16 @@ function Navbar() {
 
   useEffect(() => {
     setIsLoggedIn(!!localStorage.getItem("token"));
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    setIsAdmin(user?.role === "Admin");
     setIsMenuOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
     function handleStorageChange() {
       setIsLoggedIn(!!localStorage.getItem("token"));
+      const user = JSON.parse(localStorage.getItem("user") || "null");
+      setIsAdmin(user?.role === "Admin");
     }
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
@@ -96,6 +101,16 @@ function Navbar() {
               </Link>
             );
           })}
+
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className="flex items-center gap-1.5 text-[11px] font-medium text-[#111111] hover:text-[#FF3B73] transition-colors dark:text-slate-100 dark:hover:text-[#FF3B73]"
+            >
+              <LayoutDashboard size={14} strokeWidth={1.8} />
+              Admin
+            </Link>
+          )}
         </div>
 
         {/* Navbar Actions */}
@@ -204,6 +219,16 @@ function Navbar() {
                 </Link>
               );
             })}
+
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="py-3 text-sm font-medium text-[#111111] border-b border-gray-50 flex items-center gap-1.5 dark:border-gray-700 dark:text-slate-100"
+              >
+                <LayoutDashboard size={14} strokeWidth={1.8} />
+                Admin
+              </Link>
+            )}
 
             {isLoggedIn && (
               <Link
