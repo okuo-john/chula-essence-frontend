@@ -155,7 +155,7 @@ function Navbar() {
           {/* Cart */}
           <Link
             to="/cart"
-            className="relative flex flex-col items-center gap-1 text-[#111111] hover:text-[#FF3B73] transition-colors"
+            className="relative flex flex-col items-center gap-1 text-chula-black hover:text-[#FF3B73] transition-colors"
           >
             <ShoppingBag size={16} strokeWidth={1.8} />
 
