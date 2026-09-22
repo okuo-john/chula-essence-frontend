@@ -111,13 +111,13 @@ function Navbar() {
             {theme === "dark" ? <SunMedium size={16} /> : <MoonStar size={16} />}
           </button>
 
-          <button
+          {/* <button
             type="button"
             className="hidden sm:flex flex-col items-center gap-1 text-[#111111] hover:text-[#FF3B73] transition-colors dark:text-slate-100"
           >
             <Search size={16} strokeWidth={1.8} />
             <span className="text-[9px]">Search</span>
-          </button>
+          </button> */}
 
           {/* My Bookings — only shown when logged in */}
           {isLoggedIn && (
