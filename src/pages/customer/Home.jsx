@@ -118,16 +118,16 @@ const Home = () => {
                 </p>
                 <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <Link
-                    to="/book-service"
-                    className="inline-flex items-center justify-center rounded-full bg-primary-pink px-8 py-3 font-body font-semibold text-white shadow-lg shadow-primary-pink/30 transition duration-200 hover:bg-pink-600 animate-bounce"
-                  >
-                    Book a Service
-                  </Link>
-                  <Link
                     to="/shop-wigs"
                     className="inline-flex items-center justify-center rounded-full border border-chula-black bg-white px-8 py-3 font-body font-semibold text-chula-black shadow-lg transition duration-200 hover:bg-chula-black hover:text-white"
                   >
                     Shop Wigs
+                  </Link>
+                  <Link
+                    to="/book-service"
+                    className="inline-flex items-center justify-center rounded-full bg-primary-pink px-8 py-3 font-body font-semibold text-white shadow-lg shadow-primary-pink/30 transition duration-200 hover:bg-pink-600 animate-bounce"
+                  >
+                    Book a Service
                   </Link>
                 </div>
               </div>

@@ -69,8 +69,8 @@ function Navbar() {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Services", path: "/services" },
-    { name: "Book a Service", path: "/book-service" },
     { name: "Shop Wigs", path: "/shop-wigs" },
+    { name: "Book a Service", path: "/book-service" },
     { name: "Testimonials", path: "/#testimonials" },
     { name: "Contact", path: "/#contact" },
   ];
