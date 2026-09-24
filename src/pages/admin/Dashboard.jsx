@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../services/api";
 import { adminOrderApi } from "../../services/adminOrderApi";
+import { adminBookingApi } from "../../services/adminBookingApi";
 import AdminHeader from "../../components/admin/AdminHeader";
 import StatCard from "../../components/admin/StatCard";
 import BookingTable from "../../components/admin/BookingTable";
@@ -21,10 +21,10 @@ export default function Dashboard() {
       setError(null);
       try {
         const [bookingsRes, ordersRes] = await Promise.all([
-          api.get("/bookings"),
+          adminBookingApi.getAll(),
           adminOrderApi.getAll(),
         ]);
-        const allBookings = bookingsRes.data.data;
+        const allBookings = bookingsRes;
         setBookings(allBookings.slice(0, 5));
         setTotalBookings(allBookings.length);
         setOrders(ordersRes);

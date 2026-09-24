@@ -1,19 +1,17 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import WigCard from "../../components/products/WigCard";
 import heroImage from "../../assets/hero-woman.png";
 import installationImg from "../../assets/installation.png";
 import lashesImg from "../../assets/lashes.png";
 import nailsImg from "../../assets/nails.png";
 import pedicureImg from "../../assets/pedicure.png";
 import wiggingImg from "../../assets/wigging.png";
-import { wigs } from "../../utils/mockWigs";
 import Testimonials from "./Testimonials";
 import { Phone, Mail, Clock, MapPin } from "lucide-react";
 import { productApi } from "../../services/productApi";
+import { bookingApi } from "../../services/bookingApi";
 import ProductCard from "../../components/products/ProductCard";
-
-const API_BASE_URL = "https://server-chula-ess.onrender.com/api";
+import { LoadingProductCards, LoadingServiceCards } from "../../components/common/SkeletonLoader";
 
 const serviceImages = {
   Installation: installationImg,
@@ -77,12 +75,9 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/services`)
-      .then((res) => {
-        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-        return res.json();
-      })
-      .then((json) => setServices(json.data || []))
+    bookingApi
+      .getServices()
+      .then((data) => setServices(data || []))
       .catch((err) => {
         console.error("Falling back to local service data:", err);
         setServices(fallbackServices);
@@ -153,40 +148,44 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
-            {services.map((service) => (
-              <div
-                key={service.id}
-                className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 transition-all duration-300 hover:-translate-y-1 hover:border-primary-pink/60"
-              >
-                <img
-                  src={service.image || serviceImages[service.name]}
-                  alt={service.name}
-                  className="w-full aspect-square object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                />
-                <div className="p-4">
-                  <h3 className="relative inline-block font-body font-semibold text-chula-black">
-                    {service.name}
-                    <span className="absolute left-0 -bottom-1 h-[2px] w-0 bg-gold transition-all duration-300 group-hover:w-full" />
-                  </h3>
-                  <p className="font-body text-sm text-gray-500 mt-2">
-                    From{" "}
-                    <span className="text-primary-pink font-semibold">
-                      {typeof service.price === "number"
-                        ? `₦${service.price.toLocaleString()}`
-                        : service.price}
-                    </span>
-                  </p>
-                  <Link
-                    to="/book-service"
-                    className="mt-4 block text-center rounded-full bg-primary-pink px-4 py-2 font-body text-sm font-semibold text-white transition hover:bg-pink-600"
-                  >
-                    Book Now
-                  </Link>
+          {loading ? (
+            <LoadingServiceCards count={5} />
+          ) : (
+            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
+              {services.map((service) => (
+                <div
+                  key={service.id}
+                  className="group overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary-pink/60"
+                >
+                  <img
+                    src={service.image || serviceImages[service.name]}
+                    alt={service.name}
+                    className="aspect-square w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                  />
+                  <div className="p-4">
+                    <h3 className="relative inline-block font-body font-semibold text-chula-black">
+                      {service.name}
+                      <span className="absolute -bottom-1 left-0 h-[2px] w-0 bg-gold transition-all duration-300 group-hover:w-full" />
+                    </h3>
+                    <p className="mt-2 font-body text-sm text-gray-500">
+                      From{" "}
+                      <span className="font-semibold text-primary-pink">
+                        {typeof service.price === "number"
+                          ? `₦${service.price.toLocaleString()}`
+                          : service.price}
+                      </span>
+                    </p>
+                    <Link
+                      to="/book-service"
+                      className="mt-4 block rounded-full bg-primary-pink px-4 py-2 text-center font-body text-sm font-semibold text-white transition hover:bg-pink-600"
+                    >
+                      Book Now
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -202,9 +201,7 @@ const Home = () => {
             </p>
           </div>
 
-          {wigsLoading ? (
-            <p className="text-center text-sm text-gray-400">Loading wigs...</p>
-          ) : (
+          {wigsLoading ? <LoadingProductCards count={4} /> : (
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
               {wigs.map((product) => (
                 <ProductCard key={product._id} product={product} />

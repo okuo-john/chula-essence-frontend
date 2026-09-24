@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { SERVICES, EMPTY_ADDRESS_FORM } from "../../components/booking/data.js"
+import { EMPTY_ADDRESS_FORM } from "../../components/booking/data.js"
 import ServiceSelector from "../../components/booking/ServiceSelector";
 import ServiceTypeSelector from "../../components/booking/ServiceTypeSelector";
 import HomeServiceForm from "../../components/booking/HomeServiceForm";
@@ -11,6 +11,7 @@ import BookingSummary from "../../components/booking/BookingSummary";
 import BookingSuccess from "../../components/booking/BookingSuccess";
 import { convertTo24Hour } from "../../components/booking/utils.js";
 import { bookingApi } from "../../services/bookingApi.js";
+import RitualBackdrop from "../../components/common/RitualBackdrop";
   import { toast } from "react-toastify";
 
 
@@ -108,7 +109,19 @@ export default function BookServices() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+    <RitualBackdrop
+      aside={
+        <div className="ritual-reveal">
+          <span className="ritual-aside-mark">01</span>
+          <p className="mt-5 text-xs font-semibold uppercase tracking-[0.2em] text-pink-500">Your ritual</p>
+          <h1 className="mt-3 font-heading text-3xl leading-tight text-gray-900">Take your time. We have got the rest.</h1>
+          <p className="mt-4 text-sm leading-6">Choose what feels good today. You can move back and refine every detail before confirming.</p>
+          <div className="mt-8 h-px w-16 bg-pink-300" />
+          <p className="mt-4 text-xs uppercase tracking-[0.16em] text-gray-400">Curated care, your way</p>
+        </div>
+      }
+    >
+      <div className="flex min-h-[34rem] items-center justify-center">
       {step === "services" && (
         <ServiceSelector
           selected={selectedServices}
@@ -178,6 +191,7 @@ export default function BookServices() {
       )}
 
       {step === "confirmed" && <BookingSuccess onRestart={restart} />}
-    </div>
+      </div>
+    </RitualBackdrop>
   );
 }

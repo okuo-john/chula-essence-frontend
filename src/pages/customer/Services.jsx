@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { bookingApi } from "../../services/bookingApi";
 import ServiceListCard from "../../components/customer/ServiceListCard";
 import { LoadingServiceCards } from "../../components/common/SkeletonLoader";
+import RitualBackdrop from "../../components/common/RitualBackdrop";
 
 export default function Services() {
   const [services, setServices] = useState([]);
@@ -36,11 +37,23 @@ export default function Services() {
       : services.filter((s) => s.category === activeCategory);
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
-      <h1 className="text-2xl font-semibold text-gray-900">Our Services</h1>
-      <p className="mt-2 text-sm text-gray-500">
-        Browse everything we offer and book the ones you need.
-      </p>
+    <RitualBackdrop
+      aside={
+        <div className="ritual-reveal">
+          <span className="ritual-aside-mark">*</span>
+          <p className="mt-5 text-xs font-semibold uppercase tracking-[0.2em] text-pink-500">Chula Essence</p>
+          <p className="mt-3 font-heading text-2xl leading-tight text-gray-900">A little care goes a long way.</p>
+          <p className="mt-4 text-sm leading-6">Find the ritual that fits your mood, then let us handle the details.</p>
+        </div>
+      }
+    >
+      <div className="ritual-reveal">
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-pink-500">The menu of self-care</p>
+        <h1 className="mt-3 font-heading text-4xl leading-tight text-gray-900 sm:text-5xl">Your next beautiful moment starts here.</h1>
+        <p className="mt-4 max-w-xl text-sm leading-6 text-gray-500 sm:text-base">
+          Browse everything we offer and build a care session that feels entirely yours.
+        </p>
+      </div>
 
       {loading && <LoadingServiceCards count={6} />}
 
@@ -77,6 +90,6 @@ export default function Services() {
           )}
         </>
       )}
-    </div>
+    </RitualBackdrop>
   );
 }

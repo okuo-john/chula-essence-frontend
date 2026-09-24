@@ -1,4 +1,5 @@
 import api from "./api";
+import { getCached, invalidateCachePrefix } from "../utils/staleCache";
 
 function buildFormData(fields, file) {
   const formData = new FormData();
@@ -14,19 +15,37 @@ function buildFormData(fields, file) {
 }
 
 export const productApi = {
-  getAll: () => api.get("/products").then((res) => res.data),
-  getOne: (id) => api.get(`/products/${id}`).then((res) => res.data),
+  getAll: () =>
+    getCached("products:all", () =>
+      api.get("/products").then((res) => res.data),
+    ),
+  getOne: (id) =>
+    getCached(`products:${id}`, () =>
+      api.get(`/products/${id}`).then((res) => res.data),
+    ),
   create: (fields, file) =>
     api
       .post("/products", buildFormData(fields, file), {
         headers: { "Content-Type": "multipart/form-data" },
       })
-      .then((res) => res.data),
+      .then((res) => res.data)
+      .then((data) => {
+        invalidateCachePrefix("products");
+        return data;
+      }),
   update: (id, fields, file) =>
     api
       .patch(`/products/${id}`, buildFormData(fields, file), {
         headers: { "Content-Type": "multipart/form-data" },
       })
-      .then((res) => res.data),
-  remove: (id) => api.delete(`/products/${id}`),
+      .then((res) => res.data)
+      .then((data) => {
+        invalidateCachePrefix("products");
+        return data;
+      }),
+  remove: (id) =>
+    api.delete(`/products/${id}`).then((res) => {
+      invalidateCachePrefix("products");
+      return res;
+    }),
 };

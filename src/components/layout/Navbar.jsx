@@ -1,10 +1,11 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Search, ShoppingBag, Calendar, Menu, X, SunMedium, MoonStar, LayoutDashboard } from "lucide-react";
+import { ShoppingBag, Calendar, Menu, X, SunMedium, MoonStar, LayoutDashboard } from "lucide-react";
 import chulaLogo from "../../assets/logos/chula-essence-logo.png";
 import { bookingApi } from "../../services/bookingApi";
 import { useCart } from "../../context/CartContext";
 import { useTheme } from "../../context/ThemeContext";
+import { getUserCacheScope, invalidateCache } from "../../utils/staleCache";
 
 function Navbar() {
   const location = useLocation();
@@ -51,8 +52,10 @@ function Navbar() {
   }, [isLoggedIn, location.pathname]);
 
   function handleLogout() {
+    const userScope = getUserCacheScope();
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    invalidateCache(`cart:${userScope}`, `bookings:mine:${userScope}`);
     setIsLoggedIn(false);
     navigate("/login");
   }
