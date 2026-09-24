@@ -159,7 +159,7 @@ export default function HomeServiceForm({ form, onChange, onContinue, onBack }) 
       <button
         type="button"
         onClick={onBack}
-        className="mt-3 w-full py-3.5 rounded-full border border-gray-200 bg-white text-sm font-semibold text-gray-900 hover:bg-gray-50 active:scale-[0.99] transition"
+        className="mt-3 hidden w-full py-3.5 rounded-full border border-gray-200 bg-white text-sm font-semibold text-gray-900 hover:bg-gray-50 active:scale-[0.99] transition sm:block"
       >
         Back
       </button>

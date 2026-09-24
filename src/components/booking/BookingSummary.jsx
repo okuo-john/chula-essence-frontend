@@ -77,7 +77,7 @@ export default function BookingSummary({ booking, allServices, onSubmit, onBack,
         type="button"
         onClick={onBack}
         disabled={isSubmitting}
-        className="mt-3 w-full py-3.5 rounded-full border border-gray-200 bg-white text-sm font-semibold text-gray-900 hover:bg-gray-50 active:scale-[0.99] transition disabled:opacity-40"
+        className="mt-3 hidden w-full py-3.5 rounded-full border border-gray-200 bg-white text-sm font-semibold text-gray-900 hover:bg-gray-50 active:scale-[0.99] transition disabled:opacity-40 sm:block"
       >
         Back
       </button>

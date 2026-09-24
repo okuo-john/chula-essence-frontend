@@ -150,7 +150,7 @@ function Navbar() {
             <Link
               to="/my-bookings"
               onClick={handleNavClick}
-              className="relative flex flex-col items-center gap-1 text-[#111111] hover:text-[#FF3B73] transition-colors dark:text-slate-100"
+              className="relative hidden sm:flex flex-col items-center gap-1 text-[#111111] hover:text-[#FF3B73] transition-colors dark:text-slate-100"
             >
               <Calendar size={16} strokeWidth={1.8} />
 
@@ -168,7 +168,7 @@ function Navbar() {
           <Link
             to="/cart"
             onClick={handleNavClick}
-            className="relative flex flex-col items-center gap-1 text-chula-black hover:text-[#FF3B73] transition-colors"
+            className="relative hidden sm:flex flex-col items-center gap-1 text-chula-black hover:text-[#FF3B73] transition-colors"
           >
             <ShoppingBag size={16} strokeWidth={1.8} />
 
@@ -208,7 +208,7 @@ function Navbar() {
             onClick={() => setIsMenuOpen((prev) => !prev)}
             aria-label="Toggle menu"
             aria-expanded={isMenuOpen}
-            className="lg:hidden text-[#111111]"
+            className="lg:hidden text-[#111111] dark:text-white"
           >
             {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
@@ -246,6 +246,19 @@ function Navbar() {
               </Link>
             )}
 
+            <Link
+              to="/cart"
+              onClick={handleNavClick}
+              className="py-3 text-sm font-medium text-[#111111] border-b border-gray-50 flex items-center justify-between dark:border-gray-700 dark:text-slate-100"
+            >
+              Your Cart
+              {itemCount > 0 && (
+                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#FF3B73] px-1.5 text-[10px] text-white">
+                  {itemCount}
+                </span>
+              )}
+            </Link>
+
             {isLoggedIn && (
               <Link
                 to="/my-bookings"
@@ -273,6 +286,7 @@ function Navbar() {
               ) : (
                 <Link
                   to="/login"
+                  onClick={handleNavClick}
                   className="block text-center w-full rounded-md bg-[#111111] px-5 py-3 text-sm font-medium text-white hover:bg-[#FF3B73] transition-colors"
                 >
                   Login / Account

@@ -167,6 +167,12 @@ button {
   background-color: var(--bg-elevated) !important;
 }
 
+.dark .hero-shop-wigs:hover {
+  background-color: #ffffff !important;
+  border-color: #ffffff !important;
+  color: #000000 !important;
+}
+
 .dark .bg-gray-50,
 .dark .bg-gray-100,
 .dark .bg-soft-pink {

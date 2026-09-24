@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { ArrowLeft, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { EMPTY_ADDRESS_FORM } from "../../components/booking/data.js"
 import ServiceSelector from "../../components/booking/ServiceSelector";
@@ -17,6 +18,7 @@ import RitualBackdrop from "../../components/common/RitualBackdrop";
 
 export default function BookServices() {
   const [step, setStep] = useState("services");
+  const [showProgress, setShowProgress] = useState(false);
   const [allServices, setAllServices] = useState([]);
   const [selectedServices, setSelectedServices] = useState(() => new Set());
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -90,6 +92,7 @@ export default function BookServices() {
 
   function restart() {
     setStep("services");
+    setShowProgress(false);
     setSelectedServices(new Set());
     setSelectedLocation(null);
     setAddressForm(EMPTY_ADDRESS_FORM);
@@ -108,6 +111,51 @@ export default function BookServices() {
     details: additionalDetails,
   };
 
+  const progressSteps = [
+    { key: "services", label: "Services", completed: selectedServices.size > 0 },
+    { key: "location", label: "Location", completed: !!selectedLocation },
+    {
+      key: selectedLocation === "home" ? "home-address" : "shop-location",
+      label: selectedLocation === "home" ? "Address" : "Shop",
+      completed:
+        selectedLocation === "home"
+          ? !!addressForm.address && !!addressForm.city && !!addressForm.state
+          : !!selectedLocation,
+    },
+    {
+      key: "datetime",
+      label: "Date & Time",
+      completed: !!selectedDate && !!selectedTime,
+    },
+    {
+      key: "additional-details",
+      label: "Details",
+      completed: !!additionalDetails || step === "review" || step === "confirmed",
+    },
+    { key: "review", label: "Review", completed: step === "review" || step === "confirmed" },
+  ];
+
+  const activeStepIndex = progressSteps.findIndex((item) => item.key === step);
+
+  function getPreviousStep() {
+    switch (step) {
+      case "location":
+        return "services";
+      case "home-address":
+        return "location";
+      case "shop-location":
+        return "location";
+      case "datetime":
+        return selectedLocation === "home" ? "home-address" : "shop-location";
+      case "additional-details":
+        return "datetime";
+      case "review":
+        return "additional-details";
+      default:
+        return "services";
+    }
+  }
+
   return (
     <RitualBackdrop
       aside={
@@ -121,12 +169,64 @@ export default function BookServices() {
         </div>
       }
     >
-      <div className="flex min-h-[34rem] items-center justify-center">
+      <div className="relative mx-auto max-w-5xl">
+        {step !== "services" && step !== "confirmed" && (
+          <button
+            type="button"
+            onClick={() => setStep(getPreviousStep())}
+            aria-label="Go back"
+            className="absolute left-2 top-2 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-pink-200 bg-white text-pink-600 shadow-sm sm:hidden"
+          >
+            <ArrowLeft size={18} strokeWidth={2.5} />
+          </button>
+        )}
+
+        {showProgress && (
+          <div className="mb-6 overflow-x-auto pb-2">
+            <div className="flex min-w-max items-center gap-3 rounded-full border border-pink-100 bg-white/80 p-2 shadow-sm backdrop-blur-sm">
+              {progressSteps.map((item, index) => {
+                const isCompleted = item.completed || index < activeStepIndex;
+                const isActive = item.key === step;
+
+                return (
+                  <div
+                    key={item.key}
+                    className={`flex items-center gap-2 rounded-full px-3 py-2 ${
+                      isActive
+                        ? "bg-pink-50 text-pink-600 ring-1 ring-pink-200"
+                        : isCompleted
+                          ? "bg-emerald-50 text-emerald-600 dark:text-black"
+                          : "bg-gray-50 text-gray-400"
+                    }`}
+                  >
+                    <span
+                      className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold ${
+                        isCompleted
+                          ? "bg-emerald-500 text-white"
+                          : isActive
+                            ? "bg-pink-500 text-white"
+                            : "bg-white text-gray-400 ring-1 ring-gray-200"
+                      }`}
+                    >
+                      {isCompleted ? <Check size={14} /> : index + 1}
+                    </span>
+                    <span className="text-[11px] font-medium tracking-wide">{item.label}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        <div className="flex min-h-[34rem] items-center justify-center">
       {step === "services" && (
         <ServiceSelector
           selected={selectedServices}
           onToggle={toggleService}
-          onContinue={() => setStep("location")}
+          onContinue={() => {
+            setShowProgress(true);
+            setStep("location");
+          }}
         />
       )}
 
@@ -191,6 +291,7 @@ export default function BookServices() {
       )}
 
       {step === "confirmed" && <BookingSuccess onRestart={restart} />}
+        </div>
       </div>
     </RitualBackdrop>
   );
