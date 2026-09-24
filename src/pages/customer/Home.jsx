@@ -286,7 +286,7 @@ const Home = () => {
                     Business Hours
                   </p>
                   <p className="font-body font-semibold text-chula-black">
-                    Mon – Sat: 9:00AM – 7:00PM
+                    Mon – Sat: 10:00AM – 4:00PM
                   </p>
                 </div>
               </div>

@@ -10,35 +10,34 @@ import { getUserCacheScope, invalidateCache } from "../../utils/staleCache";
 function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem("token"));
+  const [isAdmin, setIsAdmin] = useState(() => {
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    return user?.role === "Admin";
+  });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [bookingCount, setBookingCount] = useState(0);
   const { itemCount } = useCart();
   const { theme, toggleTheme } = useTheme();
 
-  useEffect(() => {
-    setIsLoggedIn(!!localStorage.getItem("token"));
+  function syncAuthState() {
+    const token = !!localStorage.getItem("token");
     const user = JSON.parse(localStorage.getItem("user") || "null");
+    setIsLoggedIn(token);
     setIsAdmin(user?.role === "Admin");
-    setIsMenuOpen(false);
-  }, [location.pathname]);
+    if (!token) setBookingCount(0);
+  }
 
   useEffect(() => {
     function handleStorageChange() {
-      setIsLoggedIn(!!localStorage.getItem("token"));
-      const user = JSON.parse(localStorage.getItem("user") || "null");
-      setIsAdmin(user?.role === "Admin");
+      syncAuthState();
     }
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      setBookingCount(0);
-      return;
-    }
+    if (!isLoggedIn) return;
     let cancelled = false;
     bookingApi
       .getMyBookings()
@@ -57,7 +56,15 @@ function Navbar() {
     localStorage.removeItem("user");
     invalidateCache(`cart:${userScope}`, `bookings:mine:${userScope}`);
     setIsLoggedIn(false);
+    setIsAdmin(false);
+    setBookingCount(0);
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     navigate("/login");
+  }
+
+  function handleNavClick() {
+    setIsMenuOpen(false);
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }
 
   const navLinks = [
@@ -70,11 +77,11 @@ function Navbar() {
   ];
 
   return (
-    <nav className="w-full border-b border-gray-100 bg-white relative dark:border-gray-700 dark:bg-slate-900">
+    <nav className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/90 backdrop-blur-sm dark:border-gray-700 dark:bg-slate-900/90">
       <div className="max-w-[1200px] mx-auto h-[72px] px-4 sm:px-6 flex items-center justify-between">
 
         {/* Logo */}
-        <Link to="/" className="shrink-0">
+        <Link to="/" onClick={handleNavClick} className="shrink-0">
           <img
             src={chulaLogo}
             alt="Chula Essence"
@@ -91,6 +98,7 @@ function Navbar() {
               <Link
                 key={link.name}
                 to={link.path}
+                onClick={handleNavClick}
                 className={`relative py-7 text-[11px] font-medium transition-colors ${isActive
                     ? "text-[#FF3B73]"
                     : "text-[#111111] hover:text-[#FF3B73] dark:text-slate-100 dark:hover:text-[#FF3B73]"
@@ -108,6 +116,7 @@ function Navbar() {
           {isAdmin && (
             <Link
               to="/admin"
+              onClick={handleNavClick}
               className="flex items-center gap-1.5 text-[11px] font-medium text-[#111111] hover:text-[#FF3B73] transition-colors dark:text-slate-100 dark:hover:text-[#FF3B73]"
             >
               <LayoutDashboard size={14} strokeWidth={1.8} />
@@ -141,6 +150,7 @@ function Navbar() {
           {isLoggedIn && (
             <Link
               to="/my-bookings"
+              onClick={handleNavClick}
               className="relative flex flex-col items-center gap-1 text-[#111111] hover:text-[#FF3B73] transition-colors dark:text-slate-100"
             >
               <Calendar size={16} strokeWidth={1.8} />
@@ -158,6 +168,7 @@ function Navbar() {
           {/* Cart */}
           <Link
             to="/cart"
+            onClick={handleNavClick}
             className="relative flex flex-col items-center gap-1 text-chula-black hover:text-[#FF3B73] transition-colors"
           >
             <ShoppingBag size={16} strokeWidth={1.8} />
@@ -184,6 +195,7 @@ function Navbar() {
             ) : (
               <Link
                 to="/login"
+                onClick={handleNavClick}
                 className="rounded-md bg-[#111111] px-5 py-3 text-[10px] font-medium text-white hover:bg-[#FF3B73] transition-colors"
               >
                 Login / Account
@@ -215,6 +227,7 @@ function Navbar() {
                 <Link
                   key={link.name}
                   to={link.path}
+                  onClick={handleNavClick}
                   className={`py-3 text-sm font-medium border-b border-gray-50 last:border-b-0 dark:border-gray-700 ${isActive ? "text-[#FF3B73]" : "text-[#111111] dark:text-slate-100"
                     }`}
                 >
@@ -226,6 +239,7 @@ function Navbar() {
             {isAdmin && (
               <Link
                 to="/admin"
+                onClick={handleNavClick}
                 className="py-3 text-sm font-medium text-[#111111] border-b border-gray-50 flex items-center gap-1.5 dark:border-gray-700 dark:text-slate-100"
               >
                 <LayoutDashboard size={14} strokeWidth={1.8} />
@@ -236,6 +250,7 @@ function Navbar() {
             {isLoggedIn && (
               <Link
                 to="/my-bookings"
+                onClick={handleNavClick}
                 className="py-3 text-sm font-medium text-[#111111] border-b border-gray-50 flex items-center justify-between dark:border-gray-700 dark:text-slate-100"
               >
                 My Bookings

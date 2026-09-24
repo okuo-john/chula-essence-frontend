@@ -15,7 +15,11 @@ export const SHOP_LOCATION = {
 
 export const LOCATION_OPTIONS = [
   { id: "home", title: "Home Service", description: "We come to you." },
-  { id: "shop", title: "Shop Service", description: "Visit our current service location." },
+  {
+    id: "shop",
+    title: "Shop Service",
+    description: "Visit our current service location.",
+  },
 ];
 
 export const ADDRESS_FIELDS = [
@@ -26,14 +30,33 @@ export const ADDRESS_FIELDS = [
 ];
 
 export const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-export const TIME_SLOTS = ["10:00 AM", "11:00 AM", "12:00 PM", "2:00 PM", "3:00 PM", "4:00 PM"];
+export const TIME_SLOTS = [
+  "10:00 AM",
+  "11:00 AM",
+  "12:00 PM",
+  "2:00 PM",
+  "3:00 PM",
+  "4:00 PM",
+];
 export const MONTH_LABELS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 export const EMPTY_ADDRESS_FORM = {
   address: "",
+  countryCode: "NG",
+  stateCode: "",
   city: "",
   state: "",
   landmark: "",

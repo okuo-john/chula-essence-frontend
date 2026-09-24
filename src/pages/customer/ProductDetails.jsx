@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { ArrowLeft } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import { productApi } from "../../services/productApi";
 import { useCart } from "../../context/CartContext";
@@ -63,9 +64,10 @@ export default function ProductDetail() {
       <button
         type="button"
         onClick={() => navigate("/shop-wigs")}
-        className="text-sm text-gray-500 hover:text-pink-500 mb-6"
+        aria-label="Back to Shop"
+        className="mb-6 inline-flex h-11 w-11 items-center justify-center rounded-full border border-pink-200 bg-white text-pink-500 shadow-sm transition hover:-translate-y-0.5 hover:border-pink-300 hover:text-pink-600"
       >
-        ← Back to Shop
+        <ArrowLeft size={18} strokeWidth={2.5} />
       </button>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">

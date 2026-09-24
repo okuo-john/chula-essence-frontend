@@ -1,16 +1,23 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { Heart, ShoppingCart } from "lucide-react";
 import { useCart } from "../../context/CartContext";
 
 export default function ProductCard({ product }) {
   const { addToCart, items } = useCart();
+  const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
+  const [isWishlisted, setIsWishlisted] = useState(false);
 
   const cartItem = items.find((item) => item.product._id === product._id);
   const quantityInCart = cartItem?.quantity ?? 0;
   const outOfStock = !product.isAvailable || product.stock === 0;
   const atMaxStock = quantityInCart >= product.stock;
+
+  function isMobileView() {
+    return typeof window !== "undefined" && window.matchMedia("(max-width: 639px)").matches;
+  }
 
   async function handleAddToCart() {
     setError(null);
@@ -24,16 +31,65 @@ export default function ProductCard({ product }) {
     }
   }
 
+  function openProduct() {
+    if (!isMobileView()) return;
+    navigate(`/shop/${product._id}`);
+  }
+
+  function handleCardKeyDown(event) {
+    if (!isMobileView()) return;
+    if (event.target !== event.currentTarget) return;
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openProduct();
+    }
+  }
+
+  function toggleWishlist(event) {
+    event.stopPropagation();
+    setIsWishlisted((previous) => !previous);
+  }
+
+  function handleCartClick(event) {
+    event.stopPropagation();
+    if (!outOfStock && !atMaxStock && !isAdding) handleAddToCart();
+  }
+
   return (
-    <div className="relative bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+    <div
+      role="link"
+      tabIndex={0}
+      onClick={openProduct}
+      onKeyDown={handleCardKeyDown}
+      className="group relative cursor-pointer overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-pink-300 sm:cursor-default sm:hover:translate-y-0 sm:hover:shadow-sm"
+      aria-label={`View ${product.product_name}`}
+    >
       <button
         type="button"
-        aria-label="Add to wishlist"
-        className="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm hover:bg-white"
+        onClick={toggleWishlist}
+        aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+        aria-pressed={isWishlisted}
+        className="absolute left-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-gray-700 shadow-sm transition hover:scale-110 hover:text-pink-500"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-4 w-4 text-gray-900">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-        </svg>
+        <Heart
+          size={17}
+          fill={isWishlisted ? "currentColor" : "none"}
+          className={isWishlisted ? "text-pink-500" : ""}
+        />
+      </button>
+
+      <button
+        type="button"
+        onClick={handleCartClick}
+        disabled={outOfStock || atMaxStock || isAdding}
+        aria-label={atMaxStock ? "Maximum quantity in cart" : "Add to cart"}
+        className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-pink-500 text-white shadow-sm transition hover:scale-110 hover:bg-pink-600 disabled:cursor-not-allowed disabled:opacity-45 sm:hidden"
+      >
+        {isAdding ? (
+          <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+        ) : (
+          <ShoppingCart size={17} />
+        )}
       </button>
 
       {outOfStock && (
@@ -59,7 +115,7 @@ export default function ProductCard({ product }) {
 
         {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
 
-        <div className="mt-4 flex gap-2">
+        <div className="mt-4 hidden gap-2 sm:flex">
           <Link
             to={`/shop/${product._id}`}
             className="flex-1 text-center rounded-full border border-pink-500 px-3 py-2 text-xs font-semibold text-pink-500 transition hover:bg-pink-500 hover:text-white"
