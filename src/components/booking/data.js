@@ -8,9 +8,9 @@ export const SERVICES = [
 
 export const SHOP_LOCATION = {
   name: "Chula Essence Current Service Location",
-  address: "15 Example Street,",
+  address: "Country home road,",
   cityState: "Benin City, Edo State.",
-  landmark: "Near Example Shopping Complex",
+  landmark: "Opposite Agip Filling Station, Sapele Road.",
 };
 
 export const LOCATION_OPTIONS = [

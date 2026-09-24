@@ -2,26 +2,27 @@ export default function LocationMap() {
   return (
     <>
       <div className="h-36 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden">
-        <svg
-          viewBox="0 0 24 24"
-          className="w-8 h-8 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={1.6}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M12 21s-6.5-5.6-6.5-11A6.5 6.5 0 0 1 18.5 10c0 5.4-6.5 11-6.5 11Z" />
-          <circle cx="12" cy="10" r="2.2" />
-        </svg>
+        <div className="mt-4 flex-1 min-h-[200px] rounded-xl overflow-hidden">
+          <iframe
+            title="Chula Essence Location"
+            src="https://www.google.com/maps?q=Country+Home+Road+Benin+City+Edo+State&output=embed"
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        </div>
       </div>
 
-      <button
-        type="button"
-        className="mt-3 w-full py-3 rounded-full border border-gray-200 bg-white text-sm font-semibold text-amber-600 hover:bg-gray-50 active:scale-[0.99] transition"
+      <a
+        href="https://www.google.com/maps/search/?api=1&query=Country+Home+Road+Benin+City+Edo+State"
+        target="_blank"
+        rel="noreferrer"
+        className="mt-4 block text-center rounded-full border border-primary-pink px-4 py-2 font-body text-sm font-semibold text-primary-pink transition hover:bg-primary-pink hover:text-white"
       >
         View on Map
-      </button>
+      </a>
     </>
   );
 }

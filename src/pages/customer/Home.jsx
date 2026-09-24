@@ -10,6 +10,8 @@ import wiggingImg from "../../assets/wigging.png";
 import { wigs } from "../../utils/mockWigs";
 import Testimonials from "./Testimonials";
 import { Phone, Mail, Clock, MapPin } from "lucide-react";
+import { productApi } from "../../services/productApi";
+import ProductCard from "../../components/products/ProductCard";
 
 const API_BASE_URL = "https://server-chula-ess.onrender.com/api";
 
@@ -63,6 +65,16 @@ const Home = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const location = useLocation();
+  const [wigs, setWigs] = useState([]);
+  const [wigsLoading, setWigsLoading] = useState(true);
+
+  useEffect(() => {
+    productApi
+      .getAll()
+      .then((data) => setWigs(data.slice(0, 4)))
+      .catch(() => { })
+      .finally(() => setWigsLoading(false));
+  }, []);
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/services`)
@@ -190,11 +202,15 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {wigs.slice(0, 4).map((wig) => (
-              <WigCard key={wig.id} wig={wig} />
-            ))}
-          </div>
+          {wigsLoading ? (
+            <p className="text-center text-sm text-gray-400">Loading wigs...</p>
+          ) : (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+              {wigs.map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+            </div>
+          )}
 
           <div className="mt-10 text-center">
             <Link
