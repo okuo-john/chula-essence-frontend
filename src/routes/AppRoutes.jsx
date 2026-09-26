@@ -10,6 +10,7 @@ import BookServices from "../pages/customer/BookService";
 import MyBookings from "../pages/customer/MyBookings";
 import ProductDetail from "../pages/customer/ProductDetails";
 import Cart from "../pages/customer/Cart";
+import Favorites from "../pages/customer/Favorites";
 import Checkout from "../pages/customer/Checkout";
 import PaymentCallback from "../pages/customer/Payment";
 
@@ -80,6 +81,15 @@ function AppRoutes() {
         element={
           <CustomerLayout>
             <Cart />
+          </CustomerLayout>
+        }
+      />
+
+      <Route
+        path="/favorites"
+        element={
+          <CustomerLayout>
+            <Favorites />
           </CustomerLayout>
         }
       />

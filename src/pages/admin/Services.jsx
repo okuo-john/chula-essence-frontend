@@ -16,21 +16,23 @@ export default function Services() {
   const [selectedService, setSelectedService] = useState(null);
 
   useEffect(() => {
-    loadServices();
-  }, []);
+    let active = true;
+    serviceApi
+      .getAll()
+      .then((data) => {
+        if (active) setServices(data);
+      })
+      .catch((err) => {
+        if (active) setError(err.response?.data?.message || "Couldn't load services.");
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
 
-  async function loadServices() {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await serviceApi.getAll();
-      setServices(data);
-    } catch (err) {
-      setError(err.response?.data?.message || "Couldn't load services.");
-    } finally {
-      setLoading(false);
-    }
-  }
+    return () => {
+      active = false;
+    };
+  }, []);
 
   function openAddForm() {
     setEditingService(null);
@@ -117,14 +119,13 @@ export default function Services() {
         </div>
       )}
 
-      {isFormOpen && (
-        <ServiceForm
-          initialValue={editingService}
-          onSubmit={handleSubmit}
-          onCancel={closeForm}
-          isSaving={isSaving}
-        />
-      )}
+      <ServiceForm
+        key={editingService?._id ?? "new-service"}
+        initialValue={editingService}
+        onSubmit={handleSubmit}
+        onCancel={() => setEditingService(null)}
+        isSaving={isSaving}
+      />
 
       {loading ? (
         <p className="text-sm text-gray-400">Loading services...</p>

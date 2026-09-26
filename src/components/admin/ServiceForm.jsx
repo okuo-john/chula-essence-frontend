@@ -1,13 +1,26 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-const EMPTY_FORM = { name: "", description: "", price: "", duration: "", category: "" };
+const EMPTY_FORM = {
+  name: "",
+  description: "",
+  shopPrice: "",
+  homePrice: "",
+  duration: "",
+  category: "",
+};
+
+function toFormValue(service) {
+  if (!service) return EMPTY_FORM;
+  return {
+    ...EMPTY_FORM,
+    ...service,
+    shopPrice: service.shopPrice ?? "",
+    homePrice: service.homePrice ?? "",
+  };
+}
 
 export default function ServiceForm({ initialValue, onSubmit, onCancel, isSaving }) {
-  const [form, setForm] = useState(initialValue ?? EMPTY_FORM);
-
-  useEffect(() => {
-    setForm(initialValue ?? EMPTY_FORM);
-  }, [initialValue]);
+  const [form, setForm] = useState(() => toFormValue(initialValue));
 
   function handleChange(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -15,13 +28,19 @@ export default function ServiceForm({ initialValue, onSubmit, onCancel, isSaving
 
   function handleSubmit(e) {
     e.preventDefault();
-    onSubmit({ ...form, price: Number(form.price), duration: Number(form.duration) });
+    onSubmit({
+      ...form,
+      shopPrice: Number(form.shopPrice),
+      homePrice: Number(form.homePrice),
+      duration: Number(form.duration),
+    });
   }
 
   const isValid =
     form.name.trim() &&
     form.description.trim() &&
-    form.price !== "" &&
+    form.shopPrice !== "" &&
+    form.homePrice !== "" &&
     form.duration !== "" &&
     form.category.trim();
 
@@ -61,12 +80,25 @@ export default function ServiceForm({ initialValue, onSubmit, onCancel, isSaving
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-900 mb-1.5">Price (₦)</label>
+          <label className="block text-sm font-medium text-gray-900 mb-1.5">Shop Price (₦)</label>
           <input
             type="number"
-            value={form.price}
-            onChange={(e) => handleChange("price", e.target.value)}
+            min="0"
+            value={form.shopPrice}
+            onChange={(e) => handleChange("shopPrice", e.target.value)}
             placeholder="10000"
+            className="w-full rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-pink-300"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-900 mb-1.5">Home Price (₦)</label>
+          <input
+            type="number"
+            min="0"
+            value={form.homePrice}
+            onChange={(e) => handleChange("homePrice", e.target.value)}
+            placeholder="12000"
             className="w-full rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-pink-300"
           />
         </div>

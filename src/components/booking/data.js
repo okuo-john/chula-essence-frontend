@@ -6,13 +6,6 @@ export const SERVICES = [
   { id: "wigging", name: "Wigging & Revamping", price: 15000, exact: false },
 ];
 
-export const SHOP_LOCATION = {
-  name: "Chula Essence Current Service Location",
-  address: "Country home road,",
-  cityState: "Benin City, Edo State.",
-  landmark: "Opposite Agip Filling Station, Sapele Road.",
-};
-
 export const LOCATION_OPTIONS = [
   { id: "home", title: "Home Service", description: "We come to you." },
   {

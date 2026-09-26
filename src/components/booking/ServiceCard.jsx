@@ -1,6 +1,8 @@
 import { formatNaira } from "./utils";
 
-export default function ServiceCard({ service, isChecked, onToggle }) {
+export default function ServiceCard({ service, serviceType, isChecked, onToggle }) {
+  const priceField = serviceType === "home" ? "homePrice" : "shopPrice";
+
   return (
     <button
       type="button"
@@ -34,7 +36,7 @@ export default function ServiceCard({ service, isChecked, onToggle }) {
       </span>
 
       <span className="text-sm text-gray-500 whitespace-nowrap">
-        {formatNaira(service.price)}
+        {formatNaira(Number(service[priceField] ?? 0))}
       </span>
     </button>
   );

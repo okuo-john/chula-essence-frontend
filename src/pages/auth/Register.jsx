@@ -1,7 +1,7 @@
 import chulaLogo from "../../assets/logos/chula-essence-logo.png"
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Eye, EyeClosed, EyeOff } from "lucide-react";
+import { Eye, EyeClosed } from "lucide-react";
 import api from "../../services/api";
 import { toast } from "react-toastify";
 
@@ -35,6 +35,7 @@ const handleSubmit = async (e) => {
 
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
+      window.dispatchEvent(new Event("authchange"));
       toast.success("Registration successful");
       navigate("/");
     } catch (err) {

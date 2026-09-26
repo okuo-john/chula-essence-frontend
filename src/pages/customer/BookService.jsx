@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, Check } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { EMPTY_ADDRESS_FORM } from "../../components/booking/data.js"
 import ServiceSelector from "../../components/booking/ServiceSelector";
-import ServiceTypeSelector from "../../components/booking/ServiceTypeSelector";
 import HomeServiceForm from "../../components/booking/HomeServiceForm";
 import ShopServiceLocation from "../../components/booking/ShopServiceLocation";
 import DateTimeSelector from "../../components/booking/DateTimeSelector";
@@ -28,8 +27,11 @@ export default function BookServices() {
   const [additionalDetails, setAdditionalDetails] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const [bookingConfirmation, setBookingConfirmation] = useState(null);
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const requestedServiceId = searchParams.get("service");
 
   async function handleSubmitBooking() {
     const token = localStorage.getItem("token");
@@ -59,7 +61,8 @@ export default function BookServices() {
         };
       }
 
-      await bookingApi.createBooking(payload);
+      const confirmation = await bookingApi.createBooking(payload);
+      setBookingConfirmation(confirmation);
       setStep("confirmed");
     } catch (err) {
       toast.error(
@@ -71,8 +74,24 @@ export default function BookServices() {
   }
 
   useEffect(() => {
-    bookingApi.getServices().then(setAllServices).catch(() => { });
-  }, []);
+    let active = true;
+    bookingApi
+      .getServices()
+      .then((services) => {
+        if (!active) return;
+        setAllServices(services);
+        setSelectedServices(
+          requestedServiceId && services.some((service) => service._id === requestedServiceId)
+            ? new Set([requestedServiceId])
+            : new Set(),
+        );
+      })
+      .catch(() => {});
+
+    return () => {
+      active = false;
+    };
+  }, [requestedServiceId]);
 
   function toggleService(id) {
     setSelectedServices((prev) => {
@@ -82,13 +101,6 @@ export default function BookServices() {
       return next;
     });
   }
-
-  function handleLocationContinue() {
-    if (selectedLocation === "home") setStep("home-address");
-    if (selectedLocation === "shop") setStep("shop-location");
-  }
-
-
 
   function restart() {
     setStep("services");
@@ -100,6 +112,7 @@ export default function BookServices() {
     setSelectedTime(null);
     setAdditionalDetails("");
     setSubmitError(null);
+    setBookingConfirmation(null);
   }
 
   const booking = {
@@ -110,10 +123,12 @@ export default function BookServices() {
     time: selectedTime,
     details: additionalDetails,
   };
+  const selectedDuration = allServices
+    .filter((service) => selectedServices.has(service._id))
+    .reduce((total, service) => total + Number(service.duration ?? 0), 0);
 
   const progressSteps = [
-    { key: "services", label: "Services", completed: selectedServices.size > 0 },
-    { key: "location", label: "Location", completed: !!selectedLocation },
+    { key: "services", label: "Services", completed: selectedServices.size > 0 && !!selectedLocation },
     {
       key: selectedLocation === "home" ? "home-address" : "shop-location",
       label: selectedLocation === "home" ? "Address" : "Shop",
@@ -139,12 +154,9 @@ export default function BookServices() {
 
   function getPreviousStep() {
     switch (step) {
-      case "location":
-        return "services";
       case "home-address":
-        return "location";
       case "shop-location":
-        return "location";
+        return "services";
       case "datetime":
         return selectedLocation === "home" ? "home-address" : "shop-location";
       case "additional-details":
@@ -222,20 +234,13 @@ export default function BookServices() {
       {step === "services" && (
         <ServiceSelector
           selected={selectedServices}
+          serviceType={selectedLocation}
+          onSelectServiceType={setSelectedLocation}
           onToggle={toggleService}
           onContinue={() => {
             setShowProgress(true);
-            setStep("location");
+            setStep(selectedLocation === "home" ? "home-address" : "shop-location");
           }}
-        />
-      )}
-
-      {step === "location" && (
-        <ServiceTypeSelector
-          selectedLocation={selectedLocation}
-          onSelect={setSelectedLocation}
-          onContinue={handleLocationContinue}
-          onBack={() => setStep("services")}
         />
       )}
 
@@ -246,14 +251,14 @@ export default function BookServices() {
             setAddressForm((prev) => ({ ...prev, [field]: value }))
           }
           onContinue={() => setStep("datetime")}
-          onBack={() => setStep("location")}
+          onBack={() => setStep("services")}
         />
       )}
 
       {step === "shop-location" && (
         <ShopServiceLocation
           onConfirm={() => setStep("datetime")}
-          onBack={() => setStep("location")}
+          onBack={() => setStep("services")}
         />
       )}
 
@@ -261,6 +266,7 @@ export default function BookServices() {
         <DateTimeSelector
           selectedDate={selectedDate}
           selectedTime={selectedTime}
+          durationMinutes={selectedDuration}
           onSelectDate={setSelectedDate}
           onSelectTime={setSelectedTime}
           onContinue={() => setStep("additional-details")}
@@ -290,7 +296,9 @@ export default function BookServices() {
         />
       )}
 
-      {step === "confirmed" && <BookingSuccess onRestart={restart} />}
+      {step === "confirmed" && (
+        <BookingSuccess booking={bookingConfirmation} onRestart={restart} />
+      )}
         </div>
       </div>
     </RitualBackdrop>

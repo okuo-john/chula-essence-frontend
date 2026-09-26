@@ -3,7 +3,8 @@ import BookingStepper from "./BookingStepper";
 
 export default function BookingSummary({ booking, allServices, onSubmit, onBack, isSubmitting, submitError }) {
   const selectedServiceObjs = allServices.filter((s) => booking.services.has(s._id));
-  const total = selectedServiceObjs.reduce((sum, s) => sum + Number(s.price), 0);
+  const priceField = booking.location === "home" ? "homePrice" : "shopPrice";
+  const total = selectedServiceObjs.reduce((sum, service) => sum + Number(service[priceField] ?? 0), 0);
 
   return (
     <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
@@ -16,9 +17,14 @@ export default function BookingSummary({ booking, allServices, onSubmit, onBack,
       <div className="mt-5 space-y-4 text-sm">
         <div>
           <p className="font-medium text-gray-900">Services</p>
-          <ul className="mt-1 text-gray-600 space-y-0.5">
-            {selectedServiceObjs.map((s) => (
-              <li key={s._id}>• {s.name}</li>
+          <ul className="mt-1 space-y-1.5 text-gray-600">
+            {selectedServiceObjs.map((service) => (
+              <li key={service._id} className="flex justify-between gap-3">
+                <span>{service.name}</span>
+                <span className="shrink-0 font-medium">
+                  {formatNaira(Number(service[priceField] ?? 0))}
+                </span>
+              </li>
             ))}
           </ul>
         </div>

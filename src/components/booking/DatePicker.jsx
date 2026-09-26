@@ -2,7 +2,14 @@ import { useState, useMemo } from "react";
 import { WEEKDAY_LABELS, MONTH_LABELS } from "./data";
 import { buildCalendarGrid } from "./utils.js";
 
-export default function DatePicker({ selectedDate, onSelectDate }) {
+function dateKey(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+export default function DatePicker({ selectedDate, availability, availabilityLoading, onSelectDate }) {
   const today = new Date();
   const [viewYear, setViewYear] = useState(
     selectedDate ? selectedDate.getFullYear() : today.getFullYear()
@@ -77,17 +84,24 @@ export default function DatePicker({ selectedDate, onSelectDate }) {
           if (day === null) return <span key={`blank-${idx}`} />;
           const selected = isSameDate(day);
           const past = isPast(day);
+          const cellDate = new Date(viewYear, viewMonth, day);
+          const openRecord = availability.find(
+            (record) => dateKey(new Date(record.date)) === dateKey(cellDate) && record.isAvailable,
+          );
+          const disabled = past || availabilityLoading || !openRecord;
           return (
             <button
               key={day}
               type="button"
-              disabled={past}
-              onClick={() => onSelectDate(new Date(viewYear, viewMonth, day))}
+              disabled={disabled}
+              aria-label={`${MONTH_LABELS[viewMonth]} ${day}${disabled ? ", unavailable" : ""}`}
+              title={disabled ? "Unavailable" : undefined}
+              onClick={() => onSelectDate(cellDate)}
               className={`mx-auto my-0.5 w-8 h-8 rounded-full text-sm flex items-center justify-center transition-colors ${
                 selected
                   ? "bg-pink-500 text-white font-semibold"
-                  : past
-                  ? "text-gray-300"
+                  : disabled
+                  ? "cursor-not-allowed text-gray-300"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
             >

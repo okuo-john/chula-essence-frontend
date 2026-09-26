@@ -8,13 +8,14 @@ export default function ServiceTable({ services, onSelect }) {
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-      <table className="w-full text-sm">
+    <div className="overflow-x-auto rounded-xl border border-gray-100 bg-white shadow-sm">
+      <table className="w-full min-w-[850px] text-sm">
         <thead>
           <tr className="border-b border-gray-100 text-left text-xs font-medium text-gray-500">
             <th className="px-5 py-3">Name</th>
             <th className="px-5 py-3">Category</th>
-            <th className="px-5 py-3">Price</th>
+            <th className="px-5 py-3">Shop Price</th>
+            <th className="px-5 py-3">Home Price</th>
             <th className="px-5 py-3">Duration</th>
             <th className="px-5 py-3">Status</th>
           </tr>
@@ -28,8 +29,11 @@ export default function ServiceTable({ services, onSelect }) {
             >
               <td className="px-5 py-3 font-medium text-gray-900 whitespace-nowrap">{service.name}</td>
               <td className="px-5 py-3 text-gray-600">{service.category}</td>
-              <td className="px-5 py-3 text-gray-600 whitespace-nowrap">
-                ₦{Number(service.price).toLocaleString()}
+              <td className="px-5 py-3 text-gray-600">
+                ₦{Number(service.shopPrice ?? 0).toLocaleString()}
+              </td>
+              <td className="px-5 py-3 text-gray-600">
+                ₦{Number(service.homePrice ?? 0).toLocaleString()}
               </td>
               <td className="px-5 py-3 text-gray-600">{service.duration} min</td>
               <td className="px-5 py-3">

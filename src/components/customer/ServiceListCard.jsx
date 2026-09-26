@@ -12,15 +12,16 @@ export default function ServiceListCard({ service }) {
 
       <p className="mt-2 text-sm text-gray-500 flex-1">{service.description}</p>
 
-      <div className="mt-4 flex items-center justify-between text-sm">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-sm">
         <span className="text-gray-400">{service.duration} min</span>
-        <span className="font-semibold text-gray-900">
-          ₦{Number(service.price).toLocaleString()}
+        <span className="text-right font-semibold text-gray-900">
+          <span className="block text-xs font-medium text-gray-500">Shop ₦{Number(service.shopPrice ?? 0).toLocaleString()}</span>
+          <span className="block text-xs font-medium text-gray-500">Home ₦{Number(service.homePrice ?? 0).toLocaleString()}</span>
         </span>
       </div>
 
       <Link
-        to="/book-service"
+        to={`/book-service?service=${encodeURIComponent(service._id)}`}
         className="mt-4 w-full text-center rounded-full bg-pink-500 text-white text-sm font-semibold py-2.5 hover:bg-pink-600 transition"
       >
         Book Now

@@ -14,10 +14,10 @@ import ProductCard from "../../components/products/ProductCard";
 import { LoadingProductCards, LoadingServiceCards } from "../../components/common/SkeletonLoader";
 
 const serviceImages = {
-  Installation: installationImg,
+  "Wig Installation": installationImg,
   "Cluster Lashes": lashesImg,
-  Nails: nailsImg,
-  Pedicure: pedicureImg,
+  "Classic Manicure": nailsImg,
+  "Classic Pedicure": pedicureImg,
   "Wigging & Revamping": wiggingImg,
 };
 
@@ -43,6 +43,25 @@ const fallbackServices = [
     image: wiggingImg,
   },
 ];
+
+// NEW — controls the left-to-right display order on the homepage
+const SERVICE_ORDER = [
+  "Wig Installation",
+  "Cluster Lashes",
+  "Classic Pedicure",
+  "Classic Manicure",
+  "Wigging & Revamping",
+];
+
+// NEW — reorders whatever the backend returns to match SERVICE_ORDER above
+function sortServices(list) {
+  return [...list].sort((a, b) => {
+    const aIndex = SERVICE_ORDER.indexOf(a.name);
+    const bIndex = SERVICE_ORDER.indexOf(b.name);
+    return (aIndex === -1 ? SERVICE_ORDER.length : aIndex) -
+           (bIndex === -1 ? SERVICE_ORDER.length : bIndex);
+  });
+}
 
 const InstagramIcon = () => (
   <svg
@@ -77,7 +96,7 @@ const Home = () => {
   useEffect(() => {
     bookingApi
       .getServices()
-      .then((data) => setServices(data || []))
+      .then((data) => setServices(sortServices(data || []))) // CHANGED — wrapped in sortServices()
       .catch((err) => {
         console.error("Falling back to local service data:", err);
         setServices(fallbackServices);
@@ -154,7 +173,7 @@ const Home = () => {
             <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
               {services.map((service) => (
                 <div
-                  key={service.id}
+                  key={service._id || service.id}
                   className="group overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary-pink/60"
                 >
                   <img
@@ -167,16 +186,12 @@ const Home = () => {
                       {service.name}
                       <span className="absolute -bottom-1 left-0 h-[2px] w-0 bg-gold transition-all duration-300 group-hover:w-full" />
                     </h3>
-                    <p className="mt-2 font-body text-sm text-gray-500">
-                      From{" "}
-                      <span className="font-semibold text-primary-pink">
-                        {typeof service.price === "number"
-                          ? `₦${service.price.toLocaleString()}`
-                          : service.price}
-                      </span>
+                    <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 font-body text-xs text-gray-500">
+                      <span>Shop <span className="font-semibold text-primary-pink">₦{Number(service.shopPrice ?? 0).toLocaleString()}</span></span>
+                      <span>Home <span className="font-semibold text-primary-pink">₦{Number(service.homePrice ?? 0).toLocaleString()}</span></span>
                     </p>
                     <Link
-                      to="/book-service"
+                      to={`/book-service?service=${encodeURIComponent(service._id)}`}
                       className="mt-4 block rounded-full bg-primary-pink px-4 py-2 text-center font-body text-sm font-semibold text-white transition hover:bg-pink-600"
                     >
                       Book Now
