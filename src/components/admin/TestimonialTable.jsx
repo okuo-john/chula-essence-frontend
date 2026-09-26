@@ -10,7 +10,6 @@ function StarRating({ rating }) {
   );
 }
 
-<<<<<<< HEAD
 function testimonialStatus(testimonial) {
   if (testimonial.status) return testimonial.status;
   if (testimonial.isApproved === true) return "Approved";
@@ -21,7 +20,7 @@ function testimonialStatus(testimonial) {
 export default function TestimonialTable({ testimonials, onApprove, onReject, onDelete, busyId }) {
 =======
 export default function TestimonialTable({ testimonials, onSelect }) {
->>>>>>> 7c62db32640a1bb132cce66708a9410c91a5dd02
+
   if (testimonials.length === 0) {
     return (
       <div className="bg-white rounded-xl border border-dashed border-gray-200 p-10 text-center text-sm text-gray-400">
@@ -39,10 +38,9 @@ export default function TestimonialTable({ testimonials, onSelect }) {
             <th className="px-5 py-3">Feedback</th>
             <th className="px-5 py-3">Rating</th>
             <th className="px-5 py-3">Status</th>
-<<<<<<< HEAD
             <th className="px-5 py-3"></th>
 =======
->>>>>>> 7c62db32640a1bb132cce66708a9410c91a5dd02
+
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">

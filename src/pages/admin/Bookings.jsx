@@ -109,6 +109,28 @@ export default function Bookings() {
     });
   }, [bookings, search, statusFilter]);
 
+  const filteredBookings = useMemo(() => {
+    return bookings.filter((booking) => {
+      const matchesStatus = statusFilter === "All" || booking.status === statusFilter;
+      if (!matchesStatus) return false;
+
+      if (!search.trim()) return true;
+
+      const query = search.trim().toLowerCase();
+      const customerName = booking.customer?.fullname?.toLowerCase() || "";
+      const customerEmail = booking.customer?.email?.toLowerCase() || "";
+      const serviceNames = Array.isArray(booking.services)
+        ? booking.services.map((s) => (typeof s === "string" ? s : s.name)).join(" ").toLowerCase()
+        : "";
+
+      return (
+        customerName.includes(query) ||
+        customerEmail.includes(query) ||
+        serviceNames.includes(query)
+      );
+    });
+  }, [bookings, search, statusFilter]);
+
   async function handleConfirm(booking) {
     setActionError(null);
     setActionLoading("confirm");
