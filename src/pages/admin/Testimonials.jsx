@@ -9,6 +9,7 @@ export default function Testimonials() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedTestimonial, setSelectedTestimonial] = useState(null);
+  const [actionLoading, setActionLoading] = useState(null); // "approve" | "reject" | "delete" | null
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -47,35 +48,44 @@ export default function Testimonials() {
 
   async function handleApprove(id) {
     setError(null);
+    setActionLoading("approve");
     try {
       const updated = await adminTestimonialApi.approve(id);
       setTestimonials((prev) => prev.map((t) => (t._id === updated._id ? updated : t)));
       setSelectedTestimonial(updated);
     } catch (err) {
       setError(err.response?.data?.message || "Couldn't approve testimonial.");
+    } finally {
+      setActionLoading(null);
     }
   }
 
   async function handleReject(id) {
     setError(null);
+    setActionLoading("reject");
     try {
       const updated = await adminTestimonialApi.reject(id);
       setTestimonials((prev) => prev.map((t) => (t._id === updated._id ? updated : t)));
       setSelectedTestimonial(updated);
     } catch (err) {
       setError(err.response?.data?.message || "Couldn't reject testimonial.");
+    } finally {
+      setActionLoading(null);
     }
   }
 
   async function handleDelete(id) {
     if (!window.confirm("Delete this testimonial permanently?")) return;
     setError(null);
+    setActionLoading("delete");
     try {
       await adminTestimonialApi.remove(id);
       setTestimonials((prev) => prev.filter((t) => t._id !== id));
       setSelectedTestimonial(null);
     } catch (err) {
       setError(err.response?.data?.message || "Couldn't delete testimonial.");
+    } finally {
+      setActionLoading(null);
     }
   }
 
@@ -112,6 +122,7 @@ export default function Testimonials() {
           onReject={handleReject}
           onDelete={handleDelete}
           onClose={() => setSelectedTestimonial(null)}
+          actionLoading={actionLoading}
         />
       )}
     </div>
