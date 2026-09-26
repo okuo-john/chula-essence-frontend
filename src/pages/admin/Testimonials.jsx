@@ -8,8 +8,6 @@ export default function Testimonials() {
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [busyId, setBusyId] = useState(null);
-=======
   const [selectedTestimonial, setSelectedTestimonial] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
 
@@ -20,28 +18,17 @@ export default function Testimonials() {
     loadTestimonials();
   }, []);
 
-  async function handleModeration(action, testimonial) {
-    setError(null);
-    setBusyId(testimonial._id);
-    try {
-      const updated = await testimonialApi[action](testimonial._id);
-      setTestimonials((current) => current.map((item) => (
-        item._id === testimonial._id
-          ? { ...item, ...updated, status: updated.status ?? (action === "approve" ? "Approved" : "Rejected") }
-          : item
-      )));
-    } catch (err) {
-      setError(err.response?.data?.message || `Couldn't ${action} testimonial.`);
-    } finally {
-      setBusyId(null);
   async function loadTestimonials() {
     setLoading(true);
     setError(null);
+
     try {
       const data = await adminTestimonialApi.getAll();
       setTestimonials(data);
     } catch (err) {
-      setError(err.response?.data?.message || "Couldn't load testimonials.");
+      setError(
+        err.response?.data?.message || "Couldn't load testimonials."
+      );
     } finally {
       setLoading(false);
     }
@@ -49,7 +36,9 @@ export default function Testimonials() {
 
   const filteredTestimonials = useMemo(() => {
     return testimonials.filter((t) => {
-      const matchesStatus = statusFilter === "All" || t.status === statusFilter;
+      const matchesStatus =
+        statusFilter === "All" || t.status === statusFilter;
+
       if (!matchesStatus) return false;
 
       if (!search.trim()) return true;
@@ -64,39 +53,75 @@ export default function Testimonials() {
 
   async function handleApprove(id) {
     setError(null);
+    setActionLoading(id);
+
     try {
       const updated = await adminTestimonialApi.approve(id);
-      setTestimonials((prev) => prev.map((t) => (t._id === updated._id ? updated : t)));
+
+      setTestimonials((prev) =>
+        prev.map((t) => (t._id === updated._id ? updated : t))
+      );
+
       setSelectedTestimonial(updated);
     } catch (err) {
-      setError(err.response?.data?.message || "Couldn't approve testimonial.");
+      setError(
+        err.response?.data?.message || "Couldn't approve testimonial."
+      );
+    } finally {
+      setActionLoading(null);
     }
   }
 
   async function handleReject(id) {
     setError(null);
+    setActionLoading(id);
+
     try {
       const updated = await adminTestimonialApi.reject(id);
-      setTestimonials((prev) => prev.map((t) => (t._id === updated._id ? updated : t)));
+
+      setTestimonials((prev) =>
+        prev.map((t) => (t._id === updated._id ? updated : t))
+      );
+
       setSelectedTestimonial(updated);
     } catch (err) {
-      setError(err.response?.data?.message || "Couldn't reject testimonial.");
-
-=======
+      setError(
+        err.response?.data?.message || "Couldn't reject testimonial."
+      );
     } finally {
       setActionLoading(null);
+    }
+  }
 
+  async function handleDelete(id) {
+    setError(null);
+    setActionLoading(id);
+
+    try {
+      await adminTestimonialApi.delete(id);
+
+      setTestimonials((prev) =>
+        prev.filter((t) => t._id !== id)
+      );
+
+      setSelectedTestimonial(null);
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Couldn't delete testimonial."
+      );
+    } finally {
+      setActionLoading(null);
     }
   }
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-gray-900 mb-2">Testimonials</h1>
-      <p className="text-sm text-gray-500 mb-6">
-        Review submissions and approve or reject them before they appear publicly.
-=======
-        Click a testimonial to review and approve, reject, or delete it.
+      <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+        Testimonials
+      </h1>
 
+      <p className="text-sm text-gray-500 mb-6">
+        Click a testimonial to review and approve, reject, or delete it.
       </p>
 
       {error && (
@@ -113,15 +138,14 @@ export default function Testimonials() {
       />
 
       {loading ? (
-        <p className="text-sm text-gray-400">Loading testimonials...</p>
+        <p className="text-sm text-gray-400">
+          Loading testimonials...
+        </p>
       ) : (
         <TestimonialTable
-          testimonials={testimonials}
-          onApprove={(testimonial) => handleModeration("approve", testimonial)}
-          onReject={(testimonial) => handleModeration("reject", testimonial)}
-          onDelete={handleDelete}
-          busyId={busyId}
-        <TestimonialTable testimonials={filteredTestimonials} onSelect={setSelectedTestimonial} />
+          testimonials={filteredTestimonials}
+          onSelect={setSelectedTestimonial}
+        />
       )}
 
       {selectedTestimonial && (
@@ -131,10 +155,7 @@ export default function Testimonials() {
           onReject={handleReject}
           onDelete={handleDelete}
           onClose={() => setSelectedTestimonial(null)}
-
-=======
           actionLoading={actionLoading}
-
         />
       )}
     </div>

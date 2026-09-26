@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { toast } from "react-toastify";
 import { adminBookingApi } from "../../services/adminBookingApi";
 import BookingFilters from "../../components/admin/BookingFilters";
 import BookingTable from "../../components/admin/BookingTable";
@@ -27,7 +28,6 @@ export default function Bookings() {
   useEffect(() => {
     let active = true;
 
-<<<<<<< HEAD
     adminBookingApi
       .getAll(selectedState)
       .then((data) => {
@@ -72,42 +72,6 @@ export default function Bookings() {
       active = false;
     };
   }, []);
-=======
-  async function loadBookings() {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await adminBookingApi.getAll();
-      setBookings(data);
-    } catch (err) {
-      setError(err.response?.data?.message || "Couldn't load bookings.");
-    } finally {
-      setLoading(false);
-    }
-  }
->>>>>>> 7c62db32640a1bb132cce66708a9410c91a5dd02
-
-  const filteredBookings = useMemo(() => {
-    return bookings.filter((booking) => {
-      const matchesStatus = statusFilter === "All" || booking.status === statusFilter;
-      if (!matchesStatus) return false;
-
-      if (!search.trim()) return true;
-
-      const query = search.trim().toLowerCase();
-      const customerName = booking.customer?.fullname?.toLowerCase() || "";
-      const customerEmail = booking.customer?.email?.toLowerCase() || "";
-      const serviceNames = Array.isArray(booking.services)
-        ? booking.services.map((s) => (typeof s === "string" ? s : s.name)).join(" ").toLowerCase()
-        : "";
-
-      return (
-        customerName.includes(query) ||
-        customerEmail.includes(query) ||
-        serviceNames.includes(query)
-      );
-    });
-  }, [bookings, search, statusFilter]);
 
   const filteredBookings = useMemo(() => {
     return bookings.filter((booking) => {
