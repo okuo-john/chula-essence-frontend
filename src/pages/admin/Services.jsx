@@ -12,21 +12,23 @@ export default function Services() {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    loadServices();
-  }, []);
+    let active = true;
+    serviceApi
+      .getAll()
+      .then((data) => {
+        if (active) setServices(data);
+      })
+      .catch((err) => {
+        if (active) setError(err.response?.data?.message || "Couldn't load services.");
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
 
-  async function loadServices() {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await serviceApi.getAll();
-      setServices(data);
-    } catch (err) {
-      setError(err.response?.data?.message || "Couldn't load services.");
-    } finally {
-      setLoading(false);
-    }
-  }
+    return () => {
+      active = false;
+    };
+  }, []);
 
   async function handleSubmit(payload) {
     setIsSaving(true);
@@ -69,6 +71,7 @@ export default function Services() {
       )}
 
       <ServiceForm
+        key={editingService?._id ?? "new-service"}
         initialValue={editingService}
         onSubmit={handleSubmit}
         onCancel={() => setEditingService(null)}

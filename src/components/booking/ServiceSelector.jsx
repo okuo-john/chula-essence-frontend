@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { bookingApi } from "../../services/bookingApi";
 import ServiceCard from "./ServiceCard";
 import { SkeletonBlock } from "../common/SkeletonLoader";
+import { LOCATION_OPTIONS } from "./data";
 
-export default function ServiceSelector({ selected, onToggle, onContinue }) {
+export default function ServiceSelector({ selected, serviceType, onSelectServiceType, onToggle, onContinue }) {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,12 +13,10 @@ export default function ServiceSelector({ selected, onToggle, onContinue }) {
     let cancelled = false;
 
     async function loadServices() {
-      setLoading(true);
-      setError(null);
       try {
         const data = await bookingApi.getServices();
         if (!cancelled) setServices(data);
-      } catch (err) {
+      } catch {
         if (!cancelled) setError("Couldn't load services. Please try again.");
       } finally {
         if (!cancelled) setLoading(false);
@@ -36,8 +35,28 @@ export default function ServiceSelector({ selected, onToggle, onContinue }) {
         Book Your Beauty Experience
       </h1>
       <p className="mt-2 text-sm text-gray-500">
-        Select all the services you need
+        Choose where you want your service, then select what you need.
       </p>
+
+      <div className="mt-5 grid grid-cols-2 gap-2" role="group" aria-label="Service type">
+        {LOCATION_OPTIONS.map((option) => {
+          const isSelected = serviceType === option.id;
+          return (
+            <button
+              key={option.id}
+              type="button"
+              onClick={() => onSelectServiceType(option.id)}
+              aria-pressed={isSelected}
+              className={`rounded-xl border px-3 py-2.5 text-left transition-colors ${
+                isSelected ? "border-pink-300 bg-pink-50" : "border-gray-200 bg-white"
+              }`}
+            >
+              <span className="block text-sm font-semibold text-gray-900">{option.title}</span>
+              <span className="mt-0.5 block text-xs text-gray-500">{option.description}</span>
+            </button>
+          );
+        })}
+      </div>
 
       {loading && (
         <div className="mt-5 space-y-3">
@@ -63,6 +82,7 @@ export default function ServiceSelector({ selected, onToggle, onContinue }) {
             <li key={service._id}>
               <ServiceCard
                 service={service}
+                serviceType={serviceType}
                 isChecked={selected.has(service._id)}
                 onToggle={onToggle}
               />
@@ -77,7 +97,7 @@ export default function ServiceSelector({ selected, onToggle, onContinue }) {
 
       <button
         type="button"
-        disabled={count === 0}
+        disabled={count === 0 || !serviceType}
         onClick={onContinue}
         className="mt-4 w-full py-3.5 rounded-full bg-pink-500 text-white text-sm font-semibold hover:bg-pink-600 active:scale-[0.99] transition disabled:opacity-40 disabled:cursor-not-allowed"
       >

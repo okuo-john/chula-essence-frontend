@@ -18,4 +18,19 @@ export const testimonialApi = {
         invalidateCache("testimonials:all");
         return data;
       }),
+  approve: (id) =>
+    api.patch(`/testimonials/${id}/approve`).then((res) => {
+      invalidateCache("testimonials:all");
+      return res.data.data ?? res.data;
+    }),
+  reject: (id) =>
+    api.patch(`/testimonials/${id}/reject`).then((res) => {
+      invalidateCache("testimonials:all");
+      return res.data.data ?? res.data;
+    }),
+  remove: (id) =>
+    api.delete(`/testimonials/${id}`).then((res) => {
+      invalidateCache("testimonials:all");
+      return res.data;
+    }),
 };

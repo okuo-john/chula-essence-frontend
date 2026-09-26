@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { ShoppingBag, Calendar, Menu, X, SunMedium, MoonStar, LayoutDashboard } from "lucide-react";
+import { ShoppingBag, Calendar, Heart, Menu, X, SunMedium, MoonStar, LayoutDashboard } from "lucide-react";
 import chulaLogo from "../../assets/logos/chula-essence-logo.png";
 import { bookingApi } from "../../services/bookingApi";
 import { useCart } from "../../context/CartContext";
@@ -33,7 +33,11 @@ function Navbar() {
       syncAuthState();
     }
     window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    window.addEventListener("authchange", handleStorageChange);
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("authchange", handleStorageChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -58,6 +62,7 @@ function Navbar() {
     setIsLoggedIn(false);
     setIsAdmin(false);
     setBookingCount(0);
+    window.dispatchEvent(new Event("authchange"));
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     navigate("/login");
   }
@@ -161,6 +166,19 @@ function Navbar() {
               )}
 
               <span className="text-[9px] hidden sm:block">Bookings</span>
+            </Link>
+          )}
+
+          {isLoggedIn && (
+            <Link
+              to="/favorites"
+              onClick={handleNavClick}
+              aria-label="Favorites"
+              title="Favorites"
+              className="hidden sm:flex flex-col items-center gap-1 text-[#111111] transition-colors hover:text-[#FF3B73] dark:text-slate-100"
+            >
+              <Heart size={16} strokeWidth={1.8} />
+              <span className="text-[9px]">Favorites</span>
             </Link>
           )}
 
@@ -271,6 +289,17 @@ function Navbar() {
                     {bookingCount}
                   </span>
                 )}
+              </Link>
+            )}
+
+            {isLoggedIn && (
+              <Link
+                to="/favorites"
+                onClick={handleNavClick}
+                className="flex items-center gap-2 border-b border-gray-50 py-3 text-sm font-medium text-[#111111] dark:border-gray-700 dark:text-slate-100"
+              >
+                <Heart size={16} />
+                Your Favorites
               </Link>
             )}
 

@@ -2,13 +2,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Heart, ShoppingCart } from "lucide-react";
 import { useCart } from "../../context/CartContext";
+import { useFavorites } from "../../hooks/useFavorites";
 
 export default function ProductCard({ product }) {
   const { addToCart, items } = useCart();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const { favoriteIds, toggleFavorite } = useFavorites();
+  const isWishlisted = favoriteIds.includes(product._id);
 
   const cartItem = items.find((item) => item.product._id === product._id);
   const quantityInCart = cartItem?.quantity ?? 0;
@@ -47,7 +49,7 @@ export default function ProductCard({ product }) {
 
   function toggleWishlist(event) {
     event.stopPropagation();
-    setIsWishlisted((previous) => !previous);
+    toggleFavorite(product._id);
   }
 
   function handleCartClick(event) {
