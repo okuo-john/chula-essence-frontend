@@ -1,35 +1,89 @@
-import { useState, useEffect } from "react";
-import { testimonialApi } from "../../services/testimonialApi";
+import { useState, useEffect, useMemo } from "react";
+import { adminTestimonialApi } from "../../services/adminTestimonialApi";
+import TestimonialFilters from "../../components/admin/TestimonialFilters";
 import TestimonialTable from "../../components/admin/TestimonialTable";
-import { LoadingTableSkeleton } from "../../components/common/SkeletonLoader";
+import TestimonialDetailModal from "../../components/admin/TestimonialDetailModal";
 
 export default function Testimonials() {
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedTestimonial, setSelectedTestimonial] = useState(null);
+
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
 
   useEffect(() => {
-    async function load() {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await testimonialApi.getAll();
-        setTestimonials(data);
-      } catch (err) {
-        setError(err.response?.data?.message || "Couldn't load testimonials.");
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
+    loadTestimonials();
   }, []);
+
+  async function loadTestimonials() {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await adminTestimonialApi.getAll();
+      setTestimonials(data);
+    } catch (err) {
+      setError(err.response?.data?.message || "Couldn't load testimonials.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const filteredTestimonials = useMemo(() => {
+    return testimonials.filter((t) => {
+      const matchesStatus = statusFilter === "All" || t.status === statusFilter;
+      if (!matchesStatus) return false;
+
+      if (!search.trim()) return true;
+
+      const query = search.trim().toLowerCase();
+      const name = t.name?.toLowerCase() || "";
+      const feedback = t.feedback?.toLowerCase() || "";
+
+      return name.includes(query) || feedback.includes(query);
+    });
+  }, [testimonials, search, statusFilter]);
+
+  async function handleApprove(id) {
+    setError(null);
+    try {
+      const updated = await adminTestimonialApi.approve(id);
+      setTestimonials((prev) => prev.map((t) => (t._id === updated._id ? updated : t)));
+      setSelectedTestimonial(updated);
+    } catch (err) {
+      setError(err.response?.data?.message || "Couldn't approve testimonial.");
+    }
+  }
+
+  async function handleReject(id) {
+    setError(null);
+    try {
+      const updated = await adminTestimonialApi.reject(id);
+      setTestimonials((prev) => prev.map((t) => (t._id === updated._id ? updated : t)));
+      setSelectedTestimonial(updated);
+    } catch (err) {
+      setError(err.response?.data?.message || "Couldn't reject testimonial.");
+    }
+  }
+
+  async function handleDelete(id) {
+    if (!window.confirm("Delete this testimonial permanently?")) return;
+    setError(null);
+    try {
+      await adminTestimonialApi.remove(id);
+      setTestimonials((prev) => prev.filter((t) => t._id !== id));
+      setSelectedTestimonial(null);
+    } catch (err) {
+      setError(err.response?.data?.message || "Couldn't delete testimonial.");
+    }
+  }
 
   return (
     <div>
       <h1 className="text-2xl font-semibold text-gray-900 mb-2">Testimonials</h1>
       <p className="text-sm text-gray-500 mb-6">
-        All testimonials appear here as soon as they're submitted — there's no
-        approval step yet.
+        Click a testimonial to review and approve, reject, or delete it.
       </p>
 
       {error && (
@@ -38,10 +92,27 @@ export default function Testimonials() {
         </div>
       )}
 
+      <TestimonialFilters
+        search={search}
+        onSearchChange={setSearch}
+        status={statusFilter}
+        onStatusChange={setStatusFilter}
+      />
+
       {loading ? (
-        <LoadingTableSkeleton rows={5} columns={4} />
+        <p className="text-sm text-gray-400">Loading testimonials...</p>
       ) : (
-        <TestimonialTable testimonials={testimonials} />
+        <TestimonialTable testimonials={filteredTestimonials} onSelect={setSelectedTestimonial} />
+      )}
+
+      {selectedTestimonial && (
+        <TestimonialDetailModal
+          testimonial={selectedTestimonial}
+          onApprove={handleApprove}
+          onReject={handleReject}
+          onDelete={handleDelete}
+          onClose={() => setSelectedTestimonial(null)}
+        />
       )}
     </div>
   );
