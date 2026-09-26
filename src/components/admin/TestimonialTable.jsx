@@ -1,4 +1,7 @@
+import TestimonialStatusBadge from "./TestimonialStatusBadge";
+
 function StarRating({ rating }) {
+  if (!rating) return <span className="text-gray-300">—</span>;
   return (
     <span className="text-amber-400 text-sm">
       {"★".repeat(rating)}
@@ -7,6 +10,7 @@ function StarRating({ rating }) {
   );
 }
 
+<<<<<<< HEAD
 function testimonialStatus(testimonial) {
   if (testimonial.status) return testimonial.status;
   if (testimonial.isApproved === true) return "Approved";
@@ -15,6 +19,9 @@ function testimonialStatus(testimonial) {
 }
 
 export default function TestimonialTable({ testimonials, onApprove, onReject, onDelete, busyId }) {
+=======
+export default function TestimonialTable({ testimonials, onSelect }) {
+>>>>>>> 7c62db32640a1bb132cce66708a9410c91a5dd02
   if (testimonials.length === 0) {
     return (
       <div className="bg-white rounded-xl border border-dashed border-gray-200 p-10 text-center text-sm text-gray-400">
@@ -32,16 +39,24 @@ export default function TestimonialTable({ testimonials, onApprove, onReject, on
             <th className="px-5 py-3">Feedback</th>
             <th className="px-5 py-3">Rating</th>
             <th className="px-5 py-3">Status</th>
+<<<<<<< HEAD
             <th className="px-5 py-3"></th>
+=======
+>>>>>>> 7c62db32640a1bb132cce66708a9410c91a5dd02
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
           {testimonials.map((t) => (
-            <tr key={t._id}>
+            <tr
+              key={t._id}
+              onClick={() => onSelect(t)}
+              className="cursor-pointer hover:bg-gray-50"
+            >
               <td className="px-5 py-3 font-medium text-gray-900 whitespace-nowrap">{t.name}</td>
-              <td className="px-5 py-3 text-gray-600 max-w-md">{t.feedback}</td>
+              <td className="px-5 py-3 text-gray-600 max-w-md truncate">{t.feedback}</td>
+              <td className="px-5 py-3"><StarRating rating={t.rating} /></td>
               <td className="px-5 py-3">
-                {t.rating ? <StarRating rating={t.rating} /> : <span className="text-gray-300">—</span>}
+                <TestimonialStatusBadge status={t.status} />
               </td>
               <td className="px-5 py-3">
                 <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${

@@ -34,8 +34,7 @@ export default function Testimonials() {
     setSubmitError(null);
     setSubmitSuccess(false);
     try {
-      const created = await testimonialApi.create(payload);
-      setTestimonials((prev) => [created, ...prev]);
+      await testimonialApi.create(payload);
       setSubmitSuccess(true);
     } catch (err) {
       setSubmitError(err.response?.data?.message || "Couldn't submit your testimonial.");

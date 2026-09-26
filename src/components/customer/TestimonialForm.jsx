@@ -63,9 +63,15 @@ export default function TestimonialForm({ onSubmit, isSaving, submitError, submi
           />
         </div>
       </div>
+      {submitError && (
+        <p className="mt-3 text-sm text-red-500">{submitError}</p>
+      )}
 
-      {submitError && <p className="mt-3 font-body text-sm text-red-500">{submitError}</p>}
-      {submitSuccess && <p className="mt-3 font-body text-sm text-green-600">Thank you for your feedback!</p>}
+      {submitSuccess && (
+        <p className="mt-3 text-sm text-green-600">
+          Thank you! Your testimonial is awaiting review and will appear once approved.
+        </p>
+      )}
 
       <button
         type="submit"

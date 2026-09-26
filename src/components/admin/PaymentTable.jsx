@@ -12,7 +12,7 @@ function formatDate(isoDate) {
   return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
-export default function PaymentTable({ payments, onViewDetails }) {
+export default function PaymentTable({ payments, onSelect }) {
   if (payments.length === 0) {
     return (
       <div className="bg-white rounded-xl border border-dashed border-gray-200 p-10 text-center text-sm text-gray-400">
@@ -32,12 +32,15 @@ export default function PaymentTable({ payments, onViewDetails }) {
             <th className="px-5 py-3">Channel</th>
             <th className="px-5 py-3">Date</th>
             <th className="px-5 py-3">Status</th>
-            <th className="px-5 py-3"></th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
           {payments.map((payment) => (
-            <tr key={payment._id}>
+            <tr
+              key={payment._id}
+              onClick={() => onSelect(payment)}
+              className="cursor-pointer hover:bg-gray-50"
+            >
               <td className="px-5 py-3 font-mono text-xs text-gray-600 whitespace-nowrap">
                 {payment.reference}
               </td>
@@ -55,15 +58,6 @@ export default function PaymentTable({ payments, onViewDetails }) {
               </td>
               <td className="px-5 py-3">
                 <PaymentStatusBadge status={payment.status} />
-              </td>
-              <td className="px-5 py-3 text-right whitespace-nowrap">
-                <button
-                  type="button"
-                  onClick={() => onViewDetails(payment)}
-                  className="text-pink-500 font-medium hover:text-pink-600"
-                >
-                  View
-                </button>
               </td>
             </tr>
           ))}

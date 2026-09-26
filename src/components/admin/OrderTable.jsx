@@ -12,7 +12,7 @@ function formatDate(isoDate) {
   return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
-export default function OrderTable({ orders, onViewDetails }) {
+export default function OrderTable({ orders, onSelect }) {
   if (orders.length === 0) {
     return (
       <div className="bg-white rounded-xl border border-dashed border-gray-200 p-10 text-center text-sm text-gray-400">
@@ -31,12 +31,15 @@ export default function OrderTable({ orders, onViewDetails }) {
             <th className="px-5 py-3">Date</th>
             <th className="px-5 py-3">Total</th>
             <th className="px-5 py-3">Status</th>
-            <th className="px-5 py-3"></th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
           {orders.map((order) => (
-            <tr key={order._id}>
+            <tr
+              key={order._id}
+              onClick={() => onSelect(order)}
+              className="cursor-pointer hover:bg-gray-50"
+            >
               <td className="px-5 py-3 font-medium text-gray-900 whitespace-nowrap">
                 {customerLabel(order.customer)}
               </td>
@@ -51,15 +54,6 @@ export default function OrderTable({ orders, onViewDetails }) {
               </td>
               <td className="px-5 py-3">
                 <OrderStatusBadge status={order.status} />
-              </td>
-              <td className="px-5 py-3 text-right whitespace-nowrap">
-                <button
-                  type="button"
-                  onClick={() => onViewDetails(order)}
-                  className="text-pink-500 font-medium hover:text-pink-600"
-                >
-                  View
-                </button>
               </td>
             </tr>
           ))}

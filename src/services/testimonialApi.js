@@ -1,11 +1,7 @@
 import api from "./api";
-import { getCached, invalidateCache } from "../utils/staleCache";
-
-function unwrap(body) {
-  return Array.isArray(body) ? body : (body.data ?? []);
-}
 
 export const testimonialApi = {
+<<<<<<< HEAD
   getAll: () =>
     getCached("testimonials:all", () =>
       api.get("/testimonials").then((res) => unwrap(res.data)),
@@ -34,3 +30,8 @@ export const testimonialApi = {
       return res.data;
     }),
 };
+=======
+  getAll: () => api.get("/testimonials").then((res) => res.data), // raw array, no wrapper
+  create: (payload) => api.post("/testimonials", payload).then((res) => res.data.data),
+};
+>>>>>>> 7c62db32640a1bb132cce66708a9410c91a5dd02

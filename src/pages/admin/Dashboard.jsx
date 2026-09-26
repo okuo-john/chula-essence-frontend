@@ -61,13 +61,7 @@ export default function Dashboard() {
         <div className="flex w-full flex-col">
           <h2 className="text-base font-semibold text-gray-900 mb-4">Recent Bookings</h2>
           <div className="w-full min-w-0 overflow-hidden">
-            <BookingTable
-              bookings={bookings}
-              onConfirm={() => { }}
-              onReschedule={() => { }}
-              onCancel={() => { }}
-              onComplete={() => { }}
-            />
+            <BookingTable bookings={bookings} onSelect={() => {}} />
           </div>
           <button
             type="button"
