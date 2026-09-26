@@ -91,15 +91,14 @@ export default function ServiceForm({ initialValue, onSubmit, onCancel, isSaving
         >
           {isSaving ? "Saving..." : initialValue ? "Update Service" : "Add Service"}
         </button>
-        {initialValue && (
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-5 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition"
-          >
-            Cancel
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={onCancel}
+          disabled={isSaving}
+          className="px-5 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition disabled:opacity-50"
+        >
+          Cancel
+        </button>
       </div>
     </form>
   );

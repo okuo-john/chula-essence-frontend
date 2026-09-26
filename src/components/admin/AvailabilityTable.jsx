@@ -4,7 +4,7 @@ function formatDate(isoDate) {
   return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
-export default function AvailabilityTable({ records, onEdit, onDelete }) {
+export default function AvailabilityTable({ records, onSelect }) {
   if (records.length === 0) {
     return (
       <div className="bg-white rounded-xl border border-dashed border-gray-200 p-10 text-center text-sm text-gray-400">
@@ -22,12 +22,15 @@ export default function AvailabilityTable({ records, onEdit, onDelete }) {
             <th className="px-5 py-3">Hours</th>
             <th className="px-5 py-3">Breaks</th>
             <th className="px-5 py-3">Status</th>
-            <th className="px-5 py-3"></th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
           {records.map((record) => (
-            <tr key={record._id}>
+            <tr
+              key={record._id}
+              onClick={() => onSelect(record)}
+              className="cursor-pointer hover:bg-gray-50"
+            >
               <td className="px-5 py-3 font-medium text-gray-900 whitespace-nowrap">
                 {formatDate(record.date)}
               </td>
@@ -47,14 +50,6 @@ export default function AvailabilityTable({ records, onEdit, onDelete }) {
                 >
                   {record.isAvailable ? "Open" : "Closed"}
                 </span>
-              </td>
-              <td className="px-5 py-3 text-right space-x-3 whitespace-nowrap">
-                <button type="button" onClick={() => onEdit(record)} className="text-pink-500 font-medium hover:text-pink-600">
-                  Edit
-                </button>
-                <button type="button" onClick={() => onDelete(record._id)} className="text-red-500 font-medium hover:text-red-600">
-                  Delete
-                </button>
               </td>
             </tr>
           ))}

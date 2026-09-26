@@ -3,13 +3,14 @@ import { adminTestimonialApi } from "../../services/adminTestimonialApi";
 import TestimonialFilters from "../../components/admin/TestimonialFilters";
 import TestimonialTable from "../../components/admin/TestimonialTable";
 import TestimonialDetailModal from "../../components/admin/TestimonialDetailModal";
+import { LoadingTableSkeleton } from "../../components/common/SkeletonLoader";
 
 export default function Testimonials() {
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedTestimonial, setSelectedTestimonial] = useState(null);
-  const [actionLoading, setActionLoading] = useState(null); // "approve" | "reject" | "delete" | null
+  const [actionLoading, setActionLoading] = useState(null);
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -110,7 +111,7 @@ export default function Testimonials() {
       />
 
       {loading ? (
-        <p className="text-sm text-gray-400">Loading testimonials...</p>
+        <LoadingTableSkeleton rows={5} columns={4} />
       ) : (
         <TestimonialTable testimonials={filteredTestimonials} onSelect={setSelectedTestimonial} />
       )}

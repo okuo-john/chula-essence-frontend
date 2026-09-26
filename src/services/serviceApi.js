@@ -38,4 +38,5 @@ export const serviceApi = {
         invalidateCachePrefix("services");
         return data;
       }),
+       activate: (id) => api.patch(`/services/${id}`, { isActive: true }).then((res) => res.data.data),
 };

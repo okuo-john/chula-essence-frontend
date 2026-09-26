@@ -2,14 +2,18 @@ import { useState, useEffect } from "react";
 import { availabilityApi } from "../../services/availabilityApi";
 import AvailabilityForm from "../../components/admin/AvailabilityForm";
 import AvailabilityTable from "../../components/admin/AvailabilityTable";
-import { LoadingTableSkeleton } from "../../components/common/SkeletonLoader";
+import AvailabilityDetailModal from "../../components/admin/AvailabilityDetailModal";
 
 export default function Availability() {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [editingRecord, setEditingRecord] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [actionLoading, setActionLoading] = useState(null);
+
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingRecord, setEditingRecord] = useState(null);
+  const [selectedRecord, setSelectedRecord] = useState(null);
 
   useEffect(() => {
     loadRecords();
@@ -28,6 +32,22 @@ export default function Availability() {
     }
   }
 
+  function openAddForm() {
+    setEditingRecord(null);
+    setIsFormOpen(true);
+  }
+
+  function openEditForm(record) {
+    setSelectedRecord(null);
+    setEditingRecord(record);
+    setIsFormOpen(true);
+  }
+
+  function closeForm() {
+    setIsFormOpen(false);
+    setEditingRecord(null);
+  }
+
   async function handleSubmit(payload) {
     setIsSaving(true);
     setError(null);
@@ -39,7 +59,7 @@ export default function Availability() {
         const created = await availabilityApi.create(payload);
         setRecords((prev) => [...prev, created]);
       }
-      setEditingRecord(null);
+      closeForm();
     } catch (err) {
       setError(err.response?.data?.message || "Couldn't save availability.");
     } finally {
@@ -50,17 +70,32 @@ export default function Availability() {
   async function handleDelete(id) {
     if (!window.confirm("Delete this availability record?")) return;
     setError(null);
+    setActionLoading("delete");
     try {
       await availabilityApi.remove(id);
       setRecords((prev) => prev.filter((r) => r._id !== id));
+      setSelectedRecord(null);
     } catch (err) {
       setError(err.response?.data?.message || "Couldn't delete availability.");
+    } finally {
+      setActionLoading(null);
     }
   }
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-gray-900 mb-6">Availability</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-semibold text-gray-900">Availability</h1>
+        {!isFormOpen && (
+          <button
+            type="button"
+            onClick={openAddForm}
+            className="px-5 py-2.5 rounded-lg bg-pink-500 text-white text-sm font-semibold hover:bg-pink-600 transition"
+          >
+            + Add Availability
+          </button>
+        )}
+      </div>
 
       {error && (
         <div className="mb-4 rounded-lg bg-red-50 border border-red-100 text-red-600 text-sm px-4 py-3">
@@ -68,20 +103,28 @@ export default function Availability() {
         </div>
       )}
 
-      <AvailabilityForm
-        initialValue={editingRecord}
-        onSubmit={handleSubmit}
-        onCancel={() => setEditingRecord(null)}
-        isSaving={isSaving}
-      />
+      {isFormOpen && (
+        <AvailabilityForm
+          initialValue={editingRecord}
+          onSubmit={handleSubmit}
+          onCancel={closeForm}
+          isSaving={isSaving}
+        />
+      )}
 
       {loading ? (
-        <LoadingTableSkeleton rows={5} columns={4} />
+        <p className="text-sm text-gray-400">Loading availability...</p>
       ) : (
-        <AvailabilityTable
-          records={records}
-          onEdit={setEditingRecord}
+        <AvailabilityTable records={records} onSelect={setSelectedRecord} />
+      )}
+
+      {selectedRecord && (
+        <AvailabilityDetailModal
+          record={selectedRecord}
+          onEdit={openEditForm}
           onDelete={handleDelete}
+          onClose={() => setSelectedRecord(null)}
+          actionLoading={actionLoading}
         />
       )}
     </div>

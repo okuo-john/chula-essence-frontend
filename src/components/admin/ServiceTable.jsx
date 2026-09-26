@@ -1,4 +1,4 @@
-export default function ServiceTable({ services, onEdit, onDeactivate }) {
+export default function ServiceTable({ services, onSelect }) {
   if (services.length === 0) {
     return (
       <div className="bg-white rounded-xl border border-dashed border-gray-200 p-10 text-center text-sm text-gray-400">
@@ -17,15 +17,18 @@ export default function ServiceTable({ services, onEdit, onDeactivate }) {
             <th className="px-5 py-3">Price</th>
             <th className="px-5 py-3">Duration</th>
             <th className="px-5 py-3">Status</th>
-            <th className="px-5 py-3"></th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
           {services.map((service) => (
-            <tr key={service._id}>
-              <td className="px-5 py-3 font-medium text-gray-900">{service.name}</td>
+            <tr
+              key={service._id}
+              onClick={() => onSelect(service)}
+              className="cursor-pointer hover:bg-gray-50"
+            >
+              <td className="px-5 py-3 font-medium text-gray-900 whitespace-nowrap">{service.name}</td>
               <td className="px-5 py-3 text-gray-600">{service.category}</td>
-              <td className="px-5 py-3 text-gray-600">
+              <td className="px-5 py-3 text-gray-600 whitespace-nowrap">
                 ₦{Number(service.price).toLocaleString()}
               </td>
               <td className="px-5 py-3 text-gray-600">{service.duration} min</td>
@@ -37,24 +40,6 @@ export default function ServiceTable({ services, onEdit, onDeactivate }) {
                 >
                   {service.isActive ? "Active" : "Inactive"}
                 </span>
-              </td>
-              <td className="px-5 py-3 text-right space-x-3 whitespace-nowrap">
-                <button
-                  type="button"
-                  onClick={() => onEdit(service)}
-                  className="text-pink-500 font-medium hover:text-pink-600"
-                >
-                  Edit
-                </button>
-                {service.isActive && (
-                  <button
-                    type="button"
-                    onClick={() => onDeactivate(service._id)}
-                    className="text-red-500 font-medium hover:text-red-600"
-                  >
-                    Deactivate
-                  </button>
-                )}
               </td>
             </tr>
           ))}
