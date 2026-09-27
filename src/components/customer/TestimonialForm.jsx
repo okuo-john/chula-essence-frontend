@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const StarIcon = ({ filled }) => (
   <svg
@@ -17,6 +17,14 @@ export default function TestimonialForm({ onSubmit, isSaving, submitError, submi
   const [name, setName] = useState("");
   const [feedback, setFeedback] = useState("");
   const [rating, setRating] = useState(5);
+
+  useEffect(() => {
+    if (submitSuccess) {
+      setName("");
+      setFeedback("");
+      setRating(5);
+    }
+  }, [submitSuccess]);
 
   const isValid = name.trim() && feedback.trim();
 

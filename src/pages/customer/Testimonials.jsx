@@ -20,8 +20,10 @@ export default function Testimonials() {
     setLoading(true);
     setError(null);
     try {
-      const data = await testimonialApi.getAll();
-      setTestimonials(data);
+            const data = await testimonialApi.getAll();
+      const list = Array.isArray(data) ? data : (data?.data ?? data?.testimonials ?? []);
+      setTestimonials(list);
+      // setTestimonials(data);
     } catch (err) {
       setError(err.response?.data?.message || "Couldn't load testimonials.");
     } finally {

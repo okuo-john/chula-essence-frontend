@@ -1,9 +1,10 @@
 import api from "./api";
+import { getCached, invalidateCache } from "../utils/staleCache";
 
 export const testimonialApi = {
   getAll: () =>
     getCached("testimonials:all", () =>
-      api.get("/testimonials").then((res) => unwrap(res.data)),
+      api.get("/testimonials").then((res) => res.data?.data ?? res.data),
     ),
   create: (payload) =>
     api

@@ -98,7 +98,7 @@ export default function Testimonials() {
     setActionLoading(id);
 
     try {
-      await adminTestimonialApi.delete(id);
+      await adminTestimonialApi.remove(id);
 
       setTestimonials((prev) =>
         prev.filter((t) => t._id !== id)
