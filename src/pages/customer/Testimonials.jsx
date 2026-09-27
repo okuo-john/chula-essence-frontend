@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { testimonialApi } from "../../services/testimonialApi";
-import TestimonialCard from "../../components/customer/TestimonialCard";
+import { testimonialApi } from "../../services/testimonialApi.js";
+import TestimonialCard from "../../components/customer/TestimonialCard.jsx";
 import TestimonialForm from "../../components/customer/TestimonialForm";
 import { SkeletonBlock } from "../../components/common/SkeletonLoader";
 

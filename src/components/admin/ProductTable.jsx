@@ -1,4 +1,5 @@
-export default function ProductTable({ products, onEdit, onDelete }) {
+
+export default function ProductTable({ products, onSelect }) {
   if (products.length === 0) {
     return (
       <div className="bg-white rounded-xl border border-dashed border-gray-200 p-10 text-center text-sm text-gray-400">
@@ -18,12 +19,15 @@ export default function ProductTable({ products, onEdit, onDelete }) {
             <th className="px-5 py-3">Price</th>
             <th className="px-5 py-3">Stock</th>
             <th className="px-5 py-3">Status</th>
-            <th className="px-5 py-3"></th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
           {products.map((product) => (
-            <tr key={product._id}>
+            <tr
+              key={product._id}
+              onClick={() => onSelect(product)}
+              className="cursor-pointer hover:bg-gray-50"
+            >
               <td className="px-5 py-3">
                 <img
                   src={product.image}
@@ -47,14 +51,6 @@ export default function ProductTable({ products, onEdit, onDelete }) {
                 >
                   {product.isAvailable ? "Available" : "Unavailable"}
                 </span>
-              </td>
-              <td className="px-5 py-3 text-right space-x-3 whitespace-nowrap">
-                <button type="button" onClick={() => onEdit(product)} className="text-pink-500 font-medium hover:text-pink-600">
-                  Edit
-                </button>
-                <button type="button" onClick={() => onDelete(product._id)} className="text-red-500 font-medium hover:text-red-600">
-                  Delete
-                </button>
               </td>
             </tr>
           ))}
