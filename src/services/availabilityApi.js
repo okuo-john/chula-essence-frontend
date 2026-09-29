@@ -3,10 +3,11 @@ import { getCached, invalidateCache } from "../utils/staleCache";
 
 export const availabilityApi = {
   getForBooking: () =>
-    api.get("/availability").then((res) => {
-      const data = res.data.data ?? res.data;
-      return Array.isArray(data) ? data : [];
-    }),
+  api.get("/availability/public").then((res) => {
+    const data = res.data.data ?? res.data;
+    return Array.isArray(data) ? data : [];
+  }),
+  
   getAll: () =>
     getCached(
       "availability:admin",
