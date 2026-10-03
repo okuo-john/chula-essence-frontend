@@ -60,9 +60,6 @@ export default function DateTimeSelector({
           onSelectDate={handleSelectDate}
         />
       </div>
-      <p className="mt-2 text-xs text-gray-500">
-        Dates without open availability are disabled and cannot be selected.
-      </p>
 
       <p className="mt-5 text-sm font-medium text-gray-900">Select Time</p>
       <div className="mt-2">
@@ -75,9 +72,6 @@ export default function DateTimeSelector({
           onSelectTime={onSelectTime}
         />
       </div>
-      <p className="mt-2 text-xs text-gray-500">
-        Appointment times outside opening hours or during a blocked period are disabled.
-      </p>
 
       {availabilityError && <p className="mt-3 text-sm text-red-500">{availabilityError}</p>}
       {!availabilityLoading && !availabilityError && availability.length === 0 && (

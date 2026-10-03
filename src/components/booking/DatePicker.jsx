@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { toast } from "react-toastify";
 import { WEEKDAY_LABELS, MONTH_LABELS } from "./data";
 import { buildCalendarGrid } from "./utils.js";
 
@@ -93,10 +94,18 @@ export default function DatePicker({ selectedDate, availability, availabilityLoa
             <button
               key={day}
               type="button"
-              disabled={disabled}
+              aria-disabled={disabled}
               aria-label={`${MONTH_LABELS[viewMonth]} ${day}${disabled ? ", unavailable" : ""}`}
               title={disabled ? "Unavailable" : undefined}
-              onClick={() => onSelectDate(cellDate)}
+              onClick={() => {
+                if (availabilityLoading) {
+                  toast.info("Checking appointment availability. Please wait.");
+                } else if (past || !openRecord) {
+                  toast.info("This date is unavailable. Please choose a date with open availability.");
+                } else {
+                  onSelectDate(cellDate);
+                }
+              }}
               className={`mx-auto my-0.5 w-8 h-8 rounded-full text-sm flex items-center justify-center transition-colors ${
                 selected
                   ? "bg-pink-500 text-white font-semibold"

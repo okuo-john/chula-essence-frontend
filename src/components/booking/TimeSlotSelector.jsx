@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { TIME_SLOTS } from "./data";
 import { convertTo24Hour } from "./utils";
 
@@ -51,8 +52,18 @@ export default function TimeSlotSelector({
           <button
             key={slot}
             type="button"
-            onClick={() => onSelectTime(slot)}
-            disabled={unavailable}
+            onClick={() => {
+              if (availabilityLoading) {
+                toast.info("Checking appointment availability. Please wait.");
+              } else if (!selectedDate) {
+                toast.info("Select an available date first to see open appointment times.");
+              } else if (unavailable) {
+                toast.info("This time is unavailable. Please choose an open time slot.");
+              } else {
+                onSelectTime(slot);
+              }
+            }}
+            aria-disabled={unavailable}
             aria-label={`${slot}${unavailable ? ", unavailable" : ""}`}
             title={unavailable ? "Unavailable" : undefined}
             className={`py-2.5 rounded-lg text-sm font-medium border transition-colors ${
